@@ -2,7 +2,6 @@ package com.aidancbrady.vocabserver;
 
 import com.aidancbrady.vocabserver.file.AccountHandler;
 
-
 public final class ServerTimer extends Thread
 {
 	public ServerTimer()

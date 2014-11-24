@@ -16,7 +16,7 @@ public class VocabServer
 	
 	public boolean serverRunning;
 	
-	public static final int SERVER_PORT = 26832;
+	public static final int SERVER_PORT = 26830;
 	
 	public ServerSocket serverSocket;
 	
@@ -57,6 +57,47 @@ public class VocabServer
 					for(Account account : accounts)
 					{
 						System.out.println(account.username + " " + account.password + " " + account.gamesWon + " " + account.gamesLost);
+					}
+				}
+				else if(s.startsWith("delete") || s.startsWith("remove"))
+				{
+					if(s.split(" ").length > 1)
+					{
+						String account = s.split(" ")[1].trim();
+						
+						if(findAccount(account) != null)
+						{
+							accounts.remove(findAccount(account));
+							System.out.println("Removed account '" + account + "'");
+						}
+						else {
+							System.out.println("Account '" + account + "' does not exist");
+						}
+					}
+				}
+				else if(s.equals("save"))
+				{
+					AccountHandler.save();
+					System.out.println("Successfully saved account data");
+				}
+				else if(s.startsWith("info"))
+				{
+					if(s.split(" ").length > 1)
+					{
+						String account = s.split(" ")[1].trim();
+						Account acct = null;
+						
+						if((acct = findAccount(account)) != null)
+						{
+							System.out.println("Account details:");
+							System.out.println("Username: " + acct.username);
+							System.out.println("Password: " + acct.password);
+							System.out.println("Games won: " + acct.gamesWon);
+							System.out.println("Games lost: " + acct.gamesLost);
+						}
+						else {
+							System.out.println("Account '" + account + "' does not exist");
+						}
 					}
 				}
 				else {

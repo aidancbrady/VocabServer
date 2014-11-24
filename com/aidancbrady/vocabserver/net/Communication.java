@@ -40,7 +40,7 @@ public class Communication extends Thread
 				{
 					String[] creds = msg[1].split(",");
 					
-					System.out.println(socket.getInetAddress() + " attempted to log in with creds " + creds);
+					System.out.println(socket.getInetAddress() + " attempted to log in with creds " + creds[0] + ", " + creds[1]);
 					
 					Account acct = null;
 					
@@ -56,7 +56,7 @@ public class Communication extends Thread
 				{
 					String[] creds = msg[1].split(",");
 					
-					System.out.println(socket.getInetAddress() + " attempted to register with creds " + creds);
+					System.out.println(socket.getInetAddress() + " attempted to register with creds " + creds[0] + ", " + creds[1]);
 					
 					if(VocabServer.instance().findAccount(creds[0]) != null)
 					{
@@ -69,6 +69,10 @@ public class Communication extends Thread
 					else if(creds[1].trim().length() > 16)
 					{
 						writer.println("REJECT:Password must be at or below 16 characters");
+					}
+					else if(creds[1].trim().length() < 6)
+					{
+						writer.println("REJECT:Password must be at least 6 characters");
 					}
 					else if(creds[0].trim().contains(" ") || creds[1].trim().contains(" "))
 					{
