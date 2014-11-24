@@ -1,10 +1,12 @@
 package com.aidancbrady.vocabserver;
 
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import com.aidancbrady.vocabserver.file.AccountHandler;
+import com.aidancbrady.vocabserver.net.ConnectionHandler;
 
 public class VocabServer 
 {
@@ -14,6 +16,10 @@ public class VocabServer
 	
 	public boolean serverRunning;
 	
+	public static final int SERVER_PORT = 26832;
+	
+	public ServerSocket serverSocket;
+	
 	public static void main(String[] args)
 	{
 		instance().init();
@@ -22,23 +28,32 @@ public class VocabServer
 	public void init()
 	{
 		AccountHandler.load();
-		new ServerTimer().start();
 		
-		serverRunning = true;
-		
-		System.out.println("Initiated server");
-		
-		Scanner scan = new Scanner(System.in);
-		
-		while(scan.hasNext())
-		{
-			String s = scan.nextLine();
+		try {
+			serverSocket = new ServerSocket(SERVER_PORT);
 			
-			if(s.equals("stop") || s.equals("quit"))
+			new ServerTimer().start();
+			new ConnectionHandler().start();
+			
+			serverRunning = true;
+			
+			System.out.println("Initiated server");
+			
+			Scanner scan = new Scanner(System.in);
+			
+			while(scan.hasNext())
 			{
-				System.out.println("Shutting down");
-				quit();
+				String s = scan.nextLine();
+				
+				if(s.equals("stop") || s.equals("quit"))
+				{
+					System.out.println("Shutting down");
+					quit();
+				}
 			}
+		} catch(Exception e) {
+			System.out.println("Unable to start server");
+			e.printStackTrace();
 		}
 	}
 	
@@ -46,6 +61,13 @@ public class VocabServer
 	{
 		serverRunning = false;
 		AccountHandler.save();
+		
+		try {
+			serverSocket.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 		System.exit(0);
 	}
 	
