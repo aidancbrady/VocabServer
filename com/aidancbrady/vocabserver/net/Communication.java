@@ -5,6 +5,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import com.aidancbrady.vocabserver.Account;
+import com.aidancbrady.vocabserver.VocabServer;
+
 public class Communication extends Thread
 {
 	public Socket socket;
@@ -31,9 +34,24 @@ public class Communication extends Thread
 			
 			while((reading = reader.readLine()) != null && !disconnected)
 			{
-				String msg = reading.trim();
+				String[] msg = reading.trim().split(":");
 				
-				
+				if(msg[0].equals("LOGIN"))
+				{
+					String[] creds = msg[1].split(",");
+					
+					System.out.println(socket.getInetAddress() + " attempted to log in with creds " + creds);
+					
+					Account acct = null;
+					
+					if((acct = VocabServer.instance().findAccount(msg[1].split(","))) != null)
+					{
+						writer.println("ACCEPT:" + acct.gamesWon + "," + acct.gamesLost);
+					}
+					else {
+						writer.println("REJECT:Bad credentials");
+					}
+				}
 			}
 			
 			System.out.println("Closing connection with " + socket.getInetAddress());

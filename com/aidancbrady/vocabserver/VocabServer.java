@@ -50,7 +50,21 @@ public class VocabServer
 					System.out.println("Shutting down");
 					quit();
 				}
+				else if(s.equals("accounts"))
+				{
+					System.out.println("Printing entire account list...");
+					
+					for(Account account : accounts)
+					{
+						System.out.println(account.username + " " + account.password + " " + account.gamesWon + " " + account.gamesLost);
+					}
+				}
+				else {
+					System.out.println("Unknown command");
+				}
 			}
+			
+			scan.close();
 		} catch(Exception e) {
 			System.out.println("Unable to start server");
 			e.printStackTrace();
@@ -69,6 +83,19 @@ public class VocabServer
 		}
 		
 		System.exit(0);
+	}
+	
+	public Account findAccount(String[] creds)
+	{
+		for(Account account : accounts)
+		{
+			if(account.username.equals(creds[0].trim()) && account.password.equals(creds[1].trim()))
+			{
+				return account;
+			}
+		}
+		
+		return null;
 	}
 	
 	public static VocabServer instance()
