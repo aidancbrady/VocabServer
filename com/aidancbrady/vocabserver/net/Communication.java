@@ -44,12 +44,41 @@ public class Communication extends Thread
 					
 					Account acct = null;
 					
-					if((acct = VocabServer.instance().findAccount(msg[1].split(","))) != null)
+					if((acct = VocabServer.instance().findAccount(creds)) != null)
 					{
 						writer.println("ACCEPT:" + acct.gamesWon + "," + acct.gamesLost);
 					}
 					else {
 						writer.println("REJECT:Bad credentials");
+					}
+				}
+				else if(msg[0].equals("REGISTER"))
+				{
+					String[] creds = msg[1].split(",");
+					
+					System.out.println(socket.getInetAddress() + " attempted to register with creds " + creds);
+					
+					if(VocabServer.instance().findAccount(creds[0]) != null)
+					{
+						writer.println("REJECT:Username already in use");
+					}
+					else if(creds[0].trim().length() > 16)
+					{
+						writer.println("REJECT:Username must be at or below 16 characters");
+					}
+					else if(creds[1].trim().length() > 16)
+					{
+						writer.println("REJECT:Password must be at or below 16 characters");
+					}
+					else if(creds[0].trim().contains(" ") || creds[1].trim().contains(" "))
+					{
+						writer.println("REJECT:Username and password cannot contain spaces");
+					}
+					else {
+						writer.println("ACCEPT");
+						VocabServer.instance().addAccount(creds);
+						
+						System.out.println(socket.getInetAddress() + " has created account " + creds[0].trim());
 					}
 				}
 			}

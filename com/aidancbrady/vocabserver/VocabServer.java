@@ -98,6 +98,24 @@ public class VocabServer
 		return null;
 	}
 	
+	public Account findAccount(String username)
+	{
+		for(Account account : accounts)
+		{
+			if(account.username.equals(username.trim()))
+			{
+				return account;
+			}
+		}
+		
+		return null;
+	}
+	
+	public void addAccount(String[] creds)
+	{
+		accounts.add(new Account(creds[0].trim(), creds[1].trim()));
+	}
+	
 	public static VocabServer instance()
 	{
 		return instance;
