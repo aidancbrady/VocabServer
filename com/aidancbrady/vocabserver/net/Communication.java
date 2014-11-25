@@ -98,7 +98,7 @@ public class Communication extends Thread
 					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
-						StringBuilder str = new StringBuilder("ACCEPT:");
+						StringBuilder str = new StringBuilder();
 						
 						for(String s : acct.friends)
 						{
@@ -106,6 +106,15 @@ public class Communication extends Thread
 							String data = iterAcct.username + "," + iterAcct.gamesWon + "," + iterAcct.gamesLost;
 							
 							str.append(data);
+						}
+						
+						writer.println("ACCEPT:" + str);
+						
+						StringBuilder str1 = new StringBuilder();
+						
+						for(String s : acct.requested)
+						{
+							
 						}
 					}
 					else {
@@ -190,14 +199,52 @@ public class Communication extends Thread
 					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
-						Account reqAccount = null;
+						Account reqAcct = null;
 						
-						if((reqAccount = VocabServer.instance().findAccount(msg[2].trim())) != null)
+						if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
 						{
-							if(!reqAccount.requests.contains(acct.username))
+							if(acct.friends.contains(reqAcct.username))
 							{
-								reqAccount.requests.add(acct.username);
+								writer.println("REJECT:User already in your friends list");
 							}
+							else {
+								if(!reqAcct.requests.contains(acct.username))
+								{
+									reqAcct.requests.add(acct.username);
+								}
+								
+								if(!acct.requested.contains(reqAcct.username))
+								{
+									acct.requested.add(reqAcct.username);
+								}
+								
+								writer.println("ACCEPT");
+							}
+						}
+						else {
+							writer.println("REJECT:Unable to authenticate");
+						}
+					}
+					else {
+						writer.println("REJECT:Account doesn't exist");
+					}
+				}
+				else if(msg[0].equals("REQCONF"))
+				{
+					Account acct = null;
+					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						Account reqAcct = null;
+						
+						if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
+						{
+							acct.friends.add(reqAcct.username);
+							reqAcct.friends.add(acct.username);
+							acct.requests.remove(reqAcct.username);
+							reqAcct.requests.remove(acct.username);
+							acct.requested.remove(acct.username);
+							reqAcct.requested.remove(acct.username);
 							
 							writer.println("ACCEPT");
 						}

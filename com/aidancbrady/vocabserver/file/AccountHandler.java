@@ -56,7 +56,14 @@ public final class AccountHandler
 						requests.add(s.trim());
 					}
 					
-					VocabServer.instance().accounts.add(new Account(split[0], split[1]).setGamesWon(won).setGamesLost(lost).setFriends(friends).setRequests(requests));
+					List<String> requested = new ArrayList<String>();
+					
+					for(String s : split[6].split(":"))
+					{
+						requested.add(s.trim());
+					}
+					
+					VocabServer.instance().accounts.add(new Account(split[0], split[1]).setGamesWon(won).setGamesLost(lost).setFriends(friends).setRequests(requests).setRequested(requested));
 				}
 			}
 			
@@ -71,6 +78,14 @@ public final class AccountHandler
 				}
 				
 				for(Iterator<String> iter = acct.requests.iterator(); iter.hasNext();)
+				{
+					if(VocabServer.instance().findAccount(iter.next()) == null)
+					{
+						iter.remove();
+					}
+				}
+				
+				for(Iterator<String> iter = acct.requested.iterator(); iter.hasNext();)
 				{
 					if(VocabServer.instance().findAccount(iter.next()) == null)
 					{
@@ -118,7 +133,15 @@ public final class AccountHandler
 					requests.append(":");
 				}
 				
-				writer.append(acct.username + "," + acct.password + "," + acct.gamesWon + "," + acct.gamesLost + "," + friends + "," + requests);
+				StringBuilder requested = new StringBuilder();
+				
+				for(String s : acct.requested)
+				{
+					requested.append(s);
+					requested.append(":");
+				}
+				
+				writer.append(acct.username + "," + acct.password + "," + acct.gamesWon + "," + acct.gamesLost + "," + friends + "," + requests + "," + requested);
 				writer.newLine();
 			}
 			
