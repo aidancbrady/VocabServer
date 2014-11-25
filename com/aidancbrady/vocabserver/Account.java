@@ -1,5 +1,8 @@
 package com.aidancbrady.vocabserver;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Account 
 {
 	public String username;
@@ -9,6 +12,8 @@ public class Account
 	public int gamesWon;
 	
 	public int gamesLost;
+	
+	public List<String> friends = new ArrayList<String>();
 	
 	public Account(String user, String pass)
 	{
@@ -40,6 +45,20 @@ public class Account
 	public Account setGamesLost(int lost)
 	{
 		gamesLost = lost;
+		
+		return this;
+	}
+	
+	public Account addFriend(String username)
+	{
+		friends.add(username.trim());
+		
+		return this;
+	}
+	
+	public Account setFriends(List<String> list)
+	{
+		friends = list;
 		
 		return this;
 	}

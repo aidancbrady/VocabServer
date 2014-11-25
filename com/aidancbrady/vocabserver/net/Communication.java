@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import com.aidancbrady.vocabserver.Account;
+import com.aidancbrady.vocabserver.AccountParser;
 import com.aidancbrady.vocabserver.VocabServer;
 
 public class Communication extends Thread
@@ -78,12 +79,24 @@ public class Communication extends Thread
 					{
 						writer.println("REJECT:Username and password cannot contain spaces");
 					}
+					else if(!AccountParser.isValidCredential(creds[0]) || !AccountParser.isValidCredential(creds[1]))
+					{
+						writer.println("REJECT:Special characters are not allowed");
+					}
 					else {
 						writer.println("ACCEPT");
 						VocabServer.instance().addAccount(creds);
 						
 						System.out.println(socket.getInetAddress() + " has created account " + creds[0].trim());
 					}
+				}
+				else if(msg[0].equals("LFRIENDS"))
+				{
+					
+				}
+				else if(msg[0].equals("FRIENDREQ"))
+				{
+					
 				}
 			}
 			

@@ -5,6 +5,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.aidancbrady.vocabserver.Account;
 import com.aidancbrady.vocabserver.VocabServer;
@@ -39,7 +41,14 @@ public final class AccountHandler
 					int won = Integer.parseInt(split[2]);
 					int lost = Integer.parseInt(split[3]);
 					
-					VocabServer.instance().accounts.add(new Account(split[0], split[1]).setGamesWon(won).setGamesLost(lost));
+					List<String> friends = new ArrayList<String>();
+					
+					for(String s : split[4].split(":"))
+					{
+						friends.add(s);
+					}
+					
+					VocabServer.instance().accounts.add(new Account(split[0], split[1]).setGamesWon(won).setGamesLost(lost).setFriends(friends));
 				}
 			}
 			
@@ -66,7 +75,15 @@ public final class AccountHandler
 			
 			for(Account acct : VocabServer.instance().accounts)
 			{
-				writer.append(acct.username + "," + acct.password + "," + acct.gamesWon + "," + acct.gamesLost);
+				StringBuilder friends = new StringBuilder();
+				
+				for(String s : acct.friends)
+				{
+					friends.append(s);
+					friends.append(":");
+				}
+				
+				writer.append(acct.username + "," + acct.password + "," + acct.gamesWon + "," + acct.gamesLost + "," + friends);
 				writer.newLine();
 			}
 			
