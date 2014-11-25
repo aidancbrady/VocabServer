@@ -143,35 +143,46 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LUSERS"))
 				{
-					String query = msg[1].trim();
+					Account acct = null;
 					
-					List<String> accts = new ArrayList<String>();
-					
-					int i = 0;
-					
-					for(Account acct : VocabServer.instance().accounts)
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
-						if(acct.username.toLowerCase().contains(query.toLowerCase()))
+						String query = msg[2].trim();
+						
+						List<String> accts = new ArrayList<String>();
+						
+						int i = 0;
+						
+						for(Account iterAcct : VocabServer.instance().accounts)
 						{
-							accts.add(acct.username);
-							i++;
+							if(iterAcct.username.toLowerCase().contains(query.toLowerCase()))
+							{
+								if(!iterAcct.username.equals(acct.username))
+								{
+									accts.add(acct.username);
+									i++;
+								}
+							}
+							
+							if(i == 20)
+							{
+								break;
+							}
 						}
 						
-						if(i == 20)
+						StringBuilder str = new StringBuilder();
+						
+						for(String s : accts)
 						{
-							break;
+							str.append(s);
+							str.append(",");
 						}
+						
+						writer.println("ACCEPT:" + str);
 					}
-					
-					StringBuilder str = new StringBuilder();
-					
-					for(String s : accts)
-					{
-						str.append(s);
-						str.append(",");
+					else {
+						writer.println("REJECT:Unable to authenticate");
 					}
-					
-					writer.println(str);
 				}
 				else if(msg[0].equals("LREQUESTS"))
 				{
