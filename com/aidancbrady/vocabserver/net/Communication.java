@@ -106,6 +106,7 @@ public class Communication extends Thread
 							String data = iterAcct.username + "," + iterAcct.gamesWon + "," + iterAcct.gamesLost;
 							
 							str.append(data);
+							str.append(":");
 						}
 						
 						writer.println("ACCEPT:" + str);
@@ -115,6 +116,7 @@ public class Communication extends Thread
 						for(String s : acct.requested)
 						{
 							str.append(s);
+							str.append(":");
 						}
 						
 						writer.println("CONT:" + str1);
