@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.aidancbrady.vocabserver.Account;
@@ -45,10 +46,36 @@ public final class AccountHandler
 					
 					for(String s : split[4].split(":"))
 					{
-						friends.add(s);
+						friends.add(s.trim());
 					}
 					
-					VocabServer.instance().accounts.add(new Account(split[0], split[1]).setGamesWon(won).setGamesLost(lost).setFriends(friends));
+					List<String> requests = new ArrayList<String>();
+					
+					for(String s : split[5].split(":"))
+					{
+						requests.add(s.trim());
+					}
+					
+					VocabServer.instance().accounts.add(new Account(split[0], split[1]).setGamesWon(won).setGamesLost(lost).setFriends(friends).setRequests(requests));
+				}
+			}
+			
+			for(Account acct : VocabServer.instance().accounts)
+			{
+				for(Iterator<String> iter = acct.friends.iterator(); iter.hasNext();)
+				{
+					if(VocabServer.instance().findAccount(iter.next()) == null)
+					{
+						iter.remove();
+					}
+				}
+				
+				for(Iterator<String> iter = acct.requests.iterator(); iter.hasNext();)
+				{
+					if(VocabServer.instance().findAccount(iter.next()) == null)
+					{
+						iter.remove();
+					}
 				}
 			}
 			
@@ -83,7 +110,15 @@ public final class AccountHandler
 					friends.append(":");
 				}
 				
-				writer.append(acct.username + "," + acct.password + "," + acct.gamesWon + "," + acct.gamesLost + "," + friends);
+				StringBuilder requests = new StringBuilder();
+				
+				for(String s : acct.requests)
+				{
+					requests.append(s);
+					requests.append(":");
+				}
+				
+				writer.append(acct.username + "," + acct.password + "," + acct.gamesWon + "," + acct.gamesLost + "," + friends + "," + requests);
 				writer.newLine();
 			}
 			

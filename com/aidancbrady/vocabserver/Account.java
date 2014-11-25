@@ -14,6 +14,7 @@ public class Account
 	public int gamesLost;
 	
 	public List<String> friends = new ArrayList<String>();
+	public List<String> requests = new ArrayList<String>();
 	
 	public Account(String user, String pass)
 	{
@@ -59,6 +60,13 @@ public class Account
 	public Account setFriends(List<String> list)
 	{
 		friends = list;
+		
+		return this;
+	}
+	
+	public Account setRequests(List<String> list)
+	{
+		requests = list;
 		
 		return this;
 	}

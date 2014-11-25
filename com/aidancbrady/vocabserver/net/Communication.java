@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.aidancbrady.vocabserver.Account;
 import com.aidancbrady.vocabserver.AccountParser;
@@ -92,11 +94,114 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LFRIENDS"))
 				{
+					Account acct = null;
 					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						StringBuilder str = new StringBuilder("ACCEPT:");
+						
+						for(String s : acct.friends)
+						{
+							Account iterAcct = VocabServer.instance().findAccount(s);
+							String data = iterAcct.username + "," + iterAcct.gamesWon + "," + iterAcct.gamesLost;
+							
+							str.append(data);
+						}
+					}
+					else {
+						writer.println("REJECT:Unable to authenticate");
+					}
+				}
+				else if(msg[0].equals("DELFRIEND"))
+				{
+					Account acct = null;
+					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						String delAcct = msg[2].trim();
+						
+						if(VocabServer.instance().findAccount(delAcct) != null)
+						{
+							writer.println("ACCEPT");
+						}
+						else {
+							writer.println("REJECT:Account doesn't exist");
+						}
+					}
+					else {
+						writer.println("REJECT:Unable to authenticate");
+					}
+				}
+				else if(msg[0].equals("LUSERS"))
+				{
+					String query = msg[1].trim();
+					
+					List<String> accts = new ArrayList<String>();
+					
+					for(int i = 0; i < Math.min(20, VocabServer.instance().accounts.size()); i++)
+					{
+						Account acct = VocabServer.instance().accounts.get(i);
+						
+						if(acct.username.toLowerCase().contains(query.toLowerCase()))
+						{
+							accts.add(acct.username);
+						}
+					}
+					
+					StringBuilder str = new StringBuilder();
+					
+					for(String s : accts)
+					{
+						str.append(s);
+						str.append(",");
+					}
+					
+					writer.println(str);
+				}
+				else if(msg[0].equals("LREQUESTS"))
+				{
+					Account acct = null;
+					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						StringBuilder str = new StringBuilder();
+						
+						for(String s : acct.requests)
+						{
+							str.append(s);
+							str.append(",");
+						}
+						
+						writer.println("ACCEPT:" + str);
+					}
+					else {
+						writer.println("REJECT:Unable to authenticate");
+					}
 				}
 				else if(msg[0].equals("FRIENDREQ"))
 				{
+					Account acct = null;
 					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						Account reqAccount = null;
+						
+						if((reqAccount = VocabServer.instance().findAccount(msg[2].trim())) != null)
+						{
+							if(!reqAccount.requests.contains(acct.username))
+							{
+								reqAccount.requests.add(acct.username);
+							}
+							
+							writer.println("ACCEPT");
+						}
+						else {
+							writer.println("REJECT:Unable to authenticate");
+						}
+					}
+					else {
+						writer.println("REJECT:Account doesn't exist");
+					}
 				}
 			}
 			
