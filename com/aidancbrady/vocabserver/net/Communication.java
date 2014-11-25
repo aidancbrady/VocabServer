@@ -114,8 +114,10 @@ public class Communication extends Thread
 						
 						for(String s : acct.requested)
 						{
-							
+							str.append(s);
 						}
+						
+						writer.println("CONT:" + str1);
 					}
 					else {
 						writer.println("REJECT:Unable to authenticate");
@@ -268,6 +270,8 @@ public class Communication extends Thread
 					}
 				}
 			}
+			
+			writer.flush();
 			
 			System.out.println("Closing connection with " + socket.getInetAddress());
 			close();
