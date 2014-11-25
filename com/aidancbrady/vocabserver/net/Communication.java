@@ -138,13 +138,19 @@ public class Communication extends Thread
 					
 					List<String> accts = new ArrayList<String>();
 					
-					for(int i = 0; i < Math.min(20, VocabServer.instance().accounts.size()); i++)
+					int i = 0;
+					
+					for(Account acct : VocabServer.instance().accounts)
 					{
-						Account acct = VocabServer.instance().accounts.get(i);
-						
 						if(acct.username.toLowerCase().contains(query.toLowerCase()))
 						{
 							accts.add(acct.username);
+							i++;
+						}
+						
+						if(i == 20)
+						{
+							break;
 						}
 					}
 					
