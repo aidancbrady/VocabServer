@@ -102,10 +102,7 @@ public class Communication extends Thread
 						
 						for(String s : acct.friends)
 						{
-							Account iterAcct = VocabServer.instance().findAccount(s);
-							String data = iterAcct.username + "," + iterAcct.gamesWon + "," + iterAcct.gamesLost;
-							
-							str.append(data);
+							str.append(s);
 							str.append(":");
 						}
 						
@@ -131,11 +128,36 @@ public class Communication extends Thread
 					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
-						String delAcct = msg[2].trim();
+						Account delAcct = null;
 						
-						if(VocabServer.instance().findAccount(delAcct) != null)
+						if((delAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
 						{
-							writer.println("ACCEPT");
+							int type = Integer.parseInt(msg[3].trim());
+							
+							if(type == 0 /*Friend*/)
+							{
+								acct.friends.remove(delAcct.username);
+								delAcct.friends.remove(acct.username);
+								
+								writer.println("ACCEPT");
+							}
+							else if(type == 1 /*Request*/)
+							{
+								acct.requests.remove(delAcct.username);
+								delAcct.requested.remove(acct.username);
+								
+								writer.println("ACCEPT");
+							}
+							else if(type == 2 /*Requested*/)
+							{
+								acct.requested.remove(delAcct.username);
+								delAcct.requests.remove(acct.username);
+								
+								writer.println("ACCEPT");
+							}
+							else {
+								writer.println("REJECT:Couldn't parse request");
+							}
 						}
 						else {
 							writer.println("REJECT:Account doesn't exist");
@@ -270,6 +292,10 @@ public class Communication extends Thread
 					else {
 						writer.println("REJECT:Account doesn't exist");
 					}
+				}
+				else if(msg[0].equals("GETINFO"))
+				{
+					
 				}
 			}
 			
