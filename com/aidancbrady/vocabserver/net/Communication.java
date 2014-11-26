@@ -243,6 +243,7 @@ public class Communication extends Thread
 							if(acct.friends.contains(reqAcct.username))
 							{
 								writer.println("REJECT:User is already in your friends list");
+								System.out.println(msg[1].trim() + " tried to send a FRIENDREQ request to " + msg[2].trim() + ", who was already friends");
 							}
 							else {
 								if(!reqAcct.requests.contains(acct.username))
@@ -259,11 +260,13 @@ public class Communication extends Thread
 							}
 						}
 						else {
-							writer.println("REJECT:Unable to authenticate");
+							writer.println("REJECT:Account doesn't exist");
+							System.out.println(msg[1].trim() + " tried to send a FRIENDREQ request to " + msg[2].trim() + ", which doesn't exist");
 						}
 					}
 					else {
-						writer.println("REJECT:Account doesn't exist");
+						writer.println("REJECT:Unable to authenticate");
+						System.out.println("Unable to authenticate " + msg[1].trim() + " in FRIENDREQ request");
 					}
 				}
 				else if(msg[0].equals("REQCONF"))
