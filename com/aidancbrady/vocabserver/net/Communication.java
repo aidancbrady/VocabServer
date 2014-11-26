@@ -417,6 +417,7 @@ public class Communication extends Thread
 								Game game = new Game(acct.username, reqAcct.username, true);
 								game.gameType = Integer.parseInt(msg[3]);
 								game.userPoints.add(Integer.parseInt(msg[4]));
+								game.userTurn = false;
 								
 								acct.requestGames.add(game);
 								reqAcct.requestGames.add(game.getRequestPair());
@@ -440,13 +441,77 @@ public class Communication extends Thread
 						writer.println("REJECT:Unable to authenticate");
 					}
 				}
-				else if(msg[0].equals("FINISH"))
+				else if(msg[0].equals("COMPGAME"))
 				{
+					Account acct = null;
 					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						Account reqAcct = null;
+						
+						if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
+						{
+							Game g = VocabServer.instance().findActiveGame(acct, reqAcct);
+							
+							if(g != null)
+							{
+								Game pair = VocabServer.instance().findActiveGamePair(g);
+								int score = Integer.parseInt(msg[3]);
+								
+								g.userTurn = false;
+								g.userPoints.add(score);
+								
+								pair.userTurn = true;
+								pair.opponentPoints.add(score);
+								
+								writer.println("ACCEPT");
+							}
+							else {
+								writer.println("REJECT:Game doesn't exist");
+							}
+						}
+						else {
+							writer.println("REJECT:Account doesn't exist");
+						}
+					}
+					else {
+						writer.println("REJECT:Unable to authenticate");
+					}
 				}
 				else if(msg[0].equals("ACCEPTGAME"))
 				{
+					Account acct = null;
 					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						Account reqAcct = null;
+						
+						if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
+						{
+							Game g = VocabServer.instance().findRequestGame(acct, reqAcct);
+							Game pair = VocabServer.instance().findRequestGamePair(acct, reqAcct);
+							
+							if(g != null && pair != null)
+							{
+								acct.requestGames.remove(g);
+								reqAcct.requestGames.remove(pair);
+								
+								acct.activeGames.add(g.convertToActive());
+								reqAcct.activeGames.add(pair.convertToActive());
+								
+								writer.println("ACCEPT");
+							}
+							else {
+								writer.println("REJECT:Game doesn't exist");
+							}
+						}
+						else {
+							writer.println("REJECT:Account doesn't exist");
+						}
+					}
+					else {
+						writer.println("REJECT:Unable to authenticate");
+					}
 				}
 			}
 			

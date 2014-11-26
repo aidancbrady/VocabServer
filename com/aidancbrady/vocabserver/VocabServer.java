@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.aidancbrady.vocabserver.file.AccountHandler;
+import com.aidancbrady.vocabserver.game.Game;
 import com.aidancbrady.vocabserver.net.ConnectionHandler;
 
 public class VocabServer 
@@ -204,6 +205,66 @@ public class VocabServer
 			if(account.username.equals(username.trim()))
 			{
 				return account;
+			}
+		}
+		
+		return null;
+	}
+	
+	public Game findActiveGame(Account user, Account opponent)
+	{
+		for(Game g : user.activeGames)
+		{
+			if(g.hasUser(opponent.username))
+			{
+				return g;
+			}
+		}
+		
+		return null;
+	}
+	
+	public Game findActiveGamePair(Game g)
+	{
+		Account opponent = findAccount(g.opponent);
+		
+		for(Game pair : opponent.activeGames)
+		{
+			if(pair.hasUser(g.user))
+			{
+				return pair;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Finds a game that "opponent" requested against "user," from user's perspective.
+	 */
+	public Game findRequestGame(Account user, Account opponent)
+	{
+		for(Game g : user.requestGames)
+		{
+			if(!g.activeRequested && g.hasUser(opponent.username))
+			{
+				return g;
+			}
+		}
+		
+		return null;
+	}
+	
+	/** 
+	 * Finds a game that "opponent" requested against "user," from opponent's perspective.
+	 */
+	public Game findRequestGamePair(Account user, Account opponent)
+	{
+		for(Game g : opponent.requestGames)
+		{
+			if(g.activeRequested && g.hasUser(user.username))
+			{
+				return g;
 			}
 		}
 		

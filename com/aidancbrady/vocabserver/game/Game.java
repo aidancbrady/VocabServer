@@ -5,15 +5,28 @@ import java.util.List;
 
 public class Game 
 {
+	/** If this is an active or past game, this represents the active user. 
+	 * If this is a request, this represents the user that requested the game. 
+	 * */
 	public String user;
+	
+	/** If this is an active or past game, this represents the other user. 
+	 * If this is a request, this represents the user that received the request. 
+	 * */
 	public String opponent;
 	
 	public int gameType;
 	
-	public boolean userTurn;
+	public boolean userTurn = true;
 	
-	/** If this is a request, this number will be the score of the requester. */
+	/** If this is a request, this will be the score of the requester. 
+	 * If this is an active game, this represents the active user's score.
+	 * */
 	public List<Integer> userPoints = new ArrayList<Integer>();
+	
+	/** If this is a request, this will be empty.
+	 * If this is an active game, this represents the other user's score.
+	 * */
 	public List<Integer> opponentPoints = new ArrayList<Integer>();
 	
 	/** True if the active user requested this game, if this is the case then 
@@ -21,7 +34,7 @@ public class Game
 	 * player. Otherwise, "user" will represent the other player, and "opponent"
 	 * will represent the active player.
 	 * */
-	public boolean userRequested;
+	public boolean activeRequested;
 	
 	public Game(String name1, String name2)
 	{
@@ -31,19 +44,34 @@ public class Game
 	
 	public Game(String userName, String opponentName, boolean userReq)
 	{
-		userRequested = userReq;
+		activeRequested = userReq;
 		
-		user = userRequested ? userName : opponentName;
-		opponent = userRequested ? opponentName : userName;
+		user = activeRequested ? userName : opponentName;
+		opponent = activeRequested ? opponentName : userName;
 	}
 	
 	public Game getRequestPair()
 	{
-		Game g = new Game(opponent, user, !userRequested);
+		Game g = new Game(opponent, user, !activeRequested);
 		g.gameType = gameType;
 		g.userTurn = !g.userTurn;
 		
 		return g;
+	}
+	
+	public Game convertToActive()
+	{
+		if(!activeRequested) //If the active account received the request and is represented by "opponent"
+		{
+			String temp = opponent;
+			opponent = user;
+			user = temp;
+			
+			opponentPoints = userPoints;
+			userPoints = new ArrayList<Integer>();
+		}
+		
+		return this;
 	}
 	
 	public static Game readDefault(String user, String s)
@@ -98,7 +126,7 @@ public class Game
 	
 	public void writeRequest(StringBuilder str, Character split)
 	{
-		str.append(userRequested);
+		str.append(activeRequested);
 		str.append(split);
 		str.append(getRequestOpponent());
 		str.append(split);
@@ -140,12 +168,12 @@ public class Game
 	
 	public String getRequesterName()
 	{
-		return userRequested ? user : opponent;
+		return activeRequested ? user : opponent;
 	}
 	
 	public String getRequestOpponent()
 	{
-		return userRequested ? opponent : user;
+		return activeRequested ? opponent : user;
 	}
 	
 	public void setGameType(GameType type)
