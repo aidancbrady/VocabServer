@@ -224,6 +224,21 @@ public class VocabServer
 		return null;
 	}
 	
+	public Game findActiveGamePair(Game g)
+	{
+		Account opponent = findAccount(g.opponent);
+		
+		for(Game pair : opponent.activeGames)
+		{
+			if(pair.hasUser(g.user))
+			{
+				return pair;
+			}
+		}
+		
+		return null;
+	}
+	
 	public Game findPastGame(Account user, Account opponent)
 	{
 		for(Game g : user.pastGames)
@@ -237,15 +252,16 @@ public class VocabServer
 		return null;
 	}
 	
-	public Game findActiveGamePair(Game g)
+	public Game findPastGamePair(Game g)
 	{
 		Account opponent = findAccount(g.opponent);
+		Game pair = g.getNewPair();
 		
-		for(Game pair : opponent.activeGames)
+		for(Game iterG : opponent.pastGames)
 		{
-			if(pair.hasUser(g.user))
+			if(iterG.equals(pair))
 			{
-				return pair;
+				return iterG;
 			}
 		}
 		

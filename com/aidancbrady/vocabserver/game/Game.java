@@ -53,11 +53,27 @@ public class Game
 		opponent = activeRequested ? opponentName : userName;
 	}
 	
-	public Game getRequestPair()
+	public Game getNewRequestPair()
 	{
 		Game g = new Game(opponent, user, !activeRequested);
 		g.gameType = gameType;
 		g.userTurn = !g.userTurn;
+		g.userPoints = userPoints;
+		
+		return g;
+	}
+	
+	public Game getNewPair()
+	{
+		Game g = new Game(opponent, user);
+		
+		String temp = opponent;
+		opponent = user;
+		user = temp;
+		
+		List<Integer> temp1 = opponentPoints;
+		opponentPoints = userPoints;
+		userPoints = temp1;
 		
 		return g;
 	}

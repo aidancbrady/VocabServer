@@ -427,7 +427,7 @@ public class Communication extends Thread
 								game.userTurn = false;
 								
 								acct.requestGames.add(game);
-								reqAcct.requestGames.add(game.getRequestPair());
+								reqAcct.requestGames.add(game.getNewRequestPair());
 								
 								writer.println("ACCEPT");
 							}
@@ -541,8 +541,12 @@ public class Communication extends Thread
 							}
 							else if(type == 1 /*Past*/)
 							{
-								acct.pastGames.remove(VocabServer.instance().findActiveGame(acct, delAcct));
-								delAcct.pastGames.remove(VocabServer.instance().findActiveGame(delAcct, acct));
+								int removeIndex = Integer.parseInt(msg[4].trim());
+								
+								Game remove = acct.pastGames.get(removeIndex);
+								
+								acct.pastGames.remove(remove);
+								delAcct.pastGames.remove(VocabServer.instance().findPastGamePair(remove));
 								
 								writer.println("ACCEPT");
 							}
