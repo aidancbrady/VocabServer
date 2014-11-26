@@ -37,30 +37,37 @@ public final class AccountHandler
 			{
 				String[] split = readingLine.split(",");
 				
-				if(split.length == 4)
+				if(split.length >= 4)
 				{
 					int won = Integer.parseInt(split[2]);
 					int lost = Integer.parseInt(split[3]);
 					
 					List<String> friends = new ArrayList<String>();
-					
-					for(String s : split[4].split(":"))
-					{
-						friends.add(s.trim());
-					}
-					
 					List<String> requests = new ArrayList<String>();
-					
-					for(String s : split[5].split(":"))
-					{
-						requests.add(s.trim());
-					}
-					
 					List<String> requested = new ArrayList<String>();
 					
-					for(String s : split[6].split(":"))
+					if(split.length > 4)
 					{
-						requested.add(s.trim());
+						for(String s : split[4].split(":"))
+						{
+							friends.add(s.trim());
+						}
+					}
+					
+					if(split.length > 5)
+					{
+						for(String s : split[5].split(":"))
+						{
+							requests.add(s.trim());
+						}
+					}
+					
+					if(split.length > 6)
+					{
+						for(String s : split[6].split(":"))
+						{
+							requested.add(s.trim());
+						}
 					}
 					
 					VocabServer.instance().accounts.add(new Account(split[0], split[1]).setGamesWon(won).setGamesLost(lost).setFriends(friends).setRequests(requests).setRequested(requested));

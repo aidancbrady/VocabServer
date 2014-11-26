@@ -74,6 +74,9 @@ public class VocabServer
 							System.out.println("Account '" + account + "' does not exist");
 						}
 					}
+					else {
+						System.out.println("Invalid parameters");
+					}
 				}
 				else if(s.equals("save"))
 				{
@@ -89,15 +92,64 @@ public class VocabServer
 						
 						if((acct = findAccount(account)) != null)
 						{
+							StringBuilder friends = new StringBuilder();
+							
+							for(String s1 : acct.friends)
+							{
+								friends.append(s1);
+								friends.append(", ");
+							}
+							
+							StringBuilder requests = new StringBuilder();
+							
+							for(String s1 : acct.requests)
+							{
+								requests.append(s1);
+								requests.append(", ");
+							}
+							
+							StringBuilder requested = new StringBuilder();
+							
+							for(String s1 : acct.requested)
+							{
+								requested.append(s1);
+								requested.append(", ");
+							}
+							
 							System.out.println("Account details:");
 							System.out.println("Username: " + acct.username);
 							System.out.println("Password: " + acct.password);
 							System.out.println("Games won: " + acct.gamesWon);
 							System.out.println("Games lost: " + acct.gamesLost);
+							System.out.println("Friends: " + friends);
+							System.out.println("Requests: " + requests);
+							System.out.println("Requested: " + requested);
 						}
 						else {
 							System.out.println("Account '" + account + "' does not exist");
 						}
+					}
+					else {
+						System.out.println("Invalid parameters");
+					}
+				}
+				else if(s.startsWith("create"))
+				{
+					String[] split = s.split(" ");
+					
+					if(split.length > 2)
+					{
+						if(!split[1].trim().isEmpty() && split[2].trim().length() >= 6)
+						{
+							accounts.add(new Account(split[1].trim(), split[2].trim()));
+							System.out.println("Created account '" + split[1].trim() + "' '" + split[2].trim() + "'");
+						}
+						else {
+							System.out.println("Invalid amount of chars");
+						}
+					}
+					else {
+						System.out.println("Invalid parameters");
 					}
 				}
 				else {
