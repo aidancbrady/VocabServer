@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.aidancbrady.vocabserver.Account;
 import com.aidancbrady.vocabserver.VocabServer;
+import com.aidancbrady.vocabserver.game.Game;
 
 public final class AccountHandler 
 {
@@ -46,6 +47,10 @@ public final class AccountHandler
 					List<String> requests = new ArrayList<String>();
 					List<String> requested = new ArrayList<String>();
 					
+					List<Game> activeGames = new ArrayList<Game>();
+					List<Game> requestGames = new ArrayList<Game>();
+					List<Game> pastGames = new ArrayList<Game>();
+					
 					if(split.length > 5)
 					{
 						for(String s : split[5].split(":"))
@@ -70,7 +75,46 @@ public final class AccountHandler
 						}
 					}
 					
-					VocabServer.instance().accounts.add(new Account(split[0], split[1], split[2]).setGamesWon(won).setGamesLost(lost).setFriends(friends).setRequests(requests).setRequested(requested));
+					split = reader.readLine().split(",");
+					
+					for(String active : split)
+					{
+						Game g = Game.readDefault(split[0], active);
+						
+						if(g != null)
+						{
+							activeGames.add(g);
+						}
+					}
+					
+					split = reader.readLine().split(",");
+					
+					for(String request : split)
+					{
+						Game g = Game.readRequest(split[0], request);
+						
+						if(g != null)
+						{
+							requestGames.add(g);
+						}
+					}
+					
+					split = reader.readLine().split(",");
+					
+					for(String past : split)
+					{
+						Game g = Game.readDefault(split[0], past);
+						
+						if(g != null)
+						{
+							pastGames.add(g);
+						}
+					}
+					
+					VocabServer.instance().accounts.add(new Account(split[0], split[1], split[2])
+					.setGamesWon(won).setGamesLost(lost)
+					.setFriends(friends).setRequests(requests).setRequested(requested)
+					.setGameData(activeGames, requestGames, pastGames));
 				}
 			}
 			
@@ -148,7 +192,40 @@ public final class AccountHandler
 					requested.append(":");
 				}
 				
+				StringBuilder activeGames = new StringBuilder();
+				
+				for(Game g : acct.activeGames)
+				{
+					g.writeDefault(activeGames);
+					activeGames.append(",");
+				}
+				
+				StringBuilder requestGames = new StringBuilder();
+				
+				for(Game g : acct.requestGames)
+				{
+					g.writeRequest(requestGames);
+					activeGames.append(",");
+				}
+				
+				StringBuilder pastGames = new StringBuilder();
+				
+				for(Game g : acct.pastGames)
+				{
+					g.writeDefault(pastGames);
+					pastGames.append(",");
+				}
+				
 				writer.append(acct.username + "," + acct.email + "," + acct.password + "," + acct.gamesWon + "," + acct.gamesLost + "," + friends + "," + requests + "," + requested);
+				writer.newLine();
+				
+				writer.append(activeGames);
+				writer.newLine();
+				
+				writer.append(requestGames);
+				writer.newLine();
+				
+				writer.append(pastGames);
 				writer.newLine();
 			}
 			

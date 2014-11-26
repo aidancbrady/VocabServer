@@ -3,6 +3,8 @@ package com.aidancbrady.vocabserver;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.aidancbrady.vocabserver.game.Game;
+
 public class Account 
 {
 	public String username;
@@ -19,11 +21,24 @@ public class Account
 	public List<String> requests = new ArrayList<String>();
 	public List<String> requested = new ArrayList<String>();
 	
+	public List<Game> activeGames = new ArrayList<Game>();
+	public List<Game> requestGames = new ArrayList<Game>();
+	public List<Game> pastGames = new ArrayList<Game>();
+	
 	public Account(String user, String em, String pass)
 	{
 		username = user;
 		email = em;
 		password = pass;
+	}
+	
+	public Account setGameData(List<Game> active, List<Game> request, List<Game> past)
+	{
+		activeGames = active;
+		requestGames = request;
+		pastGames = past;
+		
+		return this;
 	}
 	
 	public Account setUsername(String user)
@@ -85,6 +100,20 @@ public class Account
 	public Account setRequested(List<String> list)
 	{
 		requested = list;
+		
+		return this;
+	}
+	
+	public Account setActiveGames(List<Game> games)
+	{
+		activeGames = games;
+		
+		return this;
+	}
+	
+	public Account setPastGames(List<Game> games)
+	{
+		pastGames = games;
 		
 		return this;
 	}
