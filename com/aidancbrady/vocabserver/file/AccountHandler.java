@@ -51,6 +51,8 @@ public final class AccountHandler
 					List<Game> requestGames = new ArrayList<Game>();
 					List<Game> pastGames = new ArrayList<Game>();
 					
+					String[] orig = split;
+					
 					if(split.length > 5)
 					{
 						for(String s : split[5].split(":"))
@@ -110,6 +112,8 @@ public final class AccountHandler
 							pastGames.add(g);
 						}
 					}
+					
+					split = orig;
 					
 					VocabServer.instance().accounts.add(new Account(split[0], split[1], split[2])
 					.setGamesWon(won).setGamesLost(lost)
