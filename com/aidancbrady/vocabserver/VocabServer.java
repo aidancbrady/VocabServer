@@ -224,6 +224,19 @@ public class VocabServer
 		return null;
 	}
 	
+	public Game findPastGame(Account user, Account opponent)
+	{
+		for(Game g : user.pastGames)
+		{
+			if(g.hasUser(opponent.username))
+			{
+				return g;
+			}
+		}
+		
+		return null;
+	}
+	
 	public Game findActiveGamePair(Game g)
 	{
 		Account opponent = findAccount(g.opponent);
@@ -241,6 +254,7 @@ public class VocabServer
 	
 	/**
 	 * Finds a game that "opponent" requested against "user," from user's perspective.
+	 * In other words, the user being requested's perspective.
 	 */
 	public Game findRequestGame(Account user, Account opponent)
 	{
@@ -257,6 +271,7 @@ public class VocabServer
 	
 	/** 
 	 * Finds a game that "opponent" requested against "user," from opponent's perspective.
+	 * In other words, the requesting user's perspective.
 	 */
 	public Game findRequestGamePair(Account user, Account opponent)
 	{

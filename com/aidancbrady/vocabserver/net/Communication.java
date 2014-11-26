@@ -158,9 +158,6 @@ public class Communication extends Thread
 								
 								writer.println("ACCEPT");
 							}
-							else {
-								writer.println("REJECT:Couldn't parse request");
-							}
 						}
 						else {
 							writer.println("REJECT:Account doesn't exist");
@@ -399,7 +396,7 @@ public class Communication extends Thread
 							}
 							else if(status == 2)
 							{
-								writer.println("REJECT:You already have sent " + reqAcct.username + " a game request.");
+								writer.println("REJECT:A game request already exists between you and " + reqAcct.username + ".");
 							}
 						}
 						else {
@@ -440,7 +437,7 @@ public class Communication extends Thread
 							}
 							else if(status == 2)
 							{
-								writer.println("REJECT:You already have sent " + reqAcct.username + " a game request.");
+								writer.println("REJECT:A game request already exists between you and " + reqAcct.username + ".");
 							}
 						}
 						else {
@@ -513,6 +510,55 @@ public class Communication extends Thread
 							}
 							else {
 								writer.println("REJECT:Game doesn't exist");
+							}
+						}
+						else {
+							writer.println("REJECT:Account doesn't exist");
+						}
+					}
+					else {
+						writer.println("REJECT:Unable to authenticate");
+					}
+				}
+				else if(msg[0].equals("DELGAME"))
+				{
+					Account acct = null;
+					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						Account delAcct = null;
+						
+						if((delAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
+						{
+							int type = Integer.parseInt(msg[3].trim());
+							
+							if(type == 0 /*Active*/)
+							{
+								acct.activeGames.remove(VocabServer.instance().findActiveGame(acct, delAcct));
+								delAcct.activeGames.remove(VocabServer.instance().findActiveGame(delAcct, acct));
+								
+								writer.println("ACCEPT");
+							}
+							else if(type == 1 /*Past*/)
+							{
+								acct.pastGames.remove(VocabServer.instance().findActiveGame(acct, delAcct));
+								delAcct.pastGames.remove(VocabServer.instance().findActiveGame(delAcct, acct));
+								
+								writer.println("ACCEPT");
+							}
+							else if(type == 2 /*Request*/)
+							{
+								acct.requestGames.remove(VocabServer.instance().findRequestGamePair(delAcct, acct));
+								delAcct.requestGames.remove(VocabServer.instance().findRequestGame(delAcct, acct));
+								
+								writer.println("ACCEPT");
+							}
+							else if(type == 3 /*Requested*/)
+							{
+								acct.requestGames.remove(VocabServer.instance().findRequestGamePair(acct, delAcct));
+								delAcct.requestGames.remove(VocabServer.instance().findRequestGame(acct, delAcct));
+								
+								writer.println("ACCEPT");
 							}
 						}
 						else {
