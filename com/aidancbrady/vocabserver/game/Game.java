@@ -39,6 +39,9 @@ public class Game
 	/** Only used client-side */
 	public boolean isRequest;
 	
+	/** Only used client-side */
+	public String opponentEmail;
+	
 	public Game(String name1, String name2)
 	{
 		user = name1;
@@ -264,6 +267,29 @@ public class Game
 		}
 		
 		return won;
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if(obj == null || !(obj instanceof Game))
+		{
+			return false;
+		}
+		
+		Game g = (Game)obj;
+		
+		if(!user.equals(g.user) || !opponent.equals(g.opponent) || gameType != g.gameType)
+		{
+			return false;
+		}
+		
+		if(!userPoints.equals(g.userPoints) || !opponentPoints.equals(g.opponentPoints))
+		{
+			return false;
+		}
+		
+		return true;
 	}
 	
 	public static enum GameType
