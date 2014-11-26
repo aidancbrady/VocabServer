@@ -104,6 +104,8 @@ public class Communication extends Thread
 						for(String s : acct.friends)
 						{
 							str.append(s);
+							str.append(",");
+							str.append(VocabServer.instance().findAccount(s).email);
 							str.append(":");
 						}
 						
@@ -222,6 +224,8 @@ public class Communication extends Thread
 						for(String s : acct.requests)
 						{
 							str.append(s);
+							str.append(",");
+							str.append(VocabServer.instance().findAccount(s).email);
 							str.append(":");
 						}
 						
@@ -329,6 +333,8 @@ public class Communication extends Thread
 						{
 							g.writeDefault(str, ',');
 							str.append(":");
+							str.append(VocabServer.instance().findAccount(g.opponent).email);
+							str.append(":");
 						}
 						
 						writer.println("ACCEPT:" + str);
@@ -339,6 +345,8 @@ public class Communication extends Thread
 						{
 							g.writeRequest(str1, ',');
 							str1.append(":");
+							str.append(VocabServer.instance().findAccount(g.getRequestOpponent()).email);
+							str.append(":");
 						}
 						
 						writer.println("CONT:" + str1);
@@ -358,6 +366,8 @@ public class Communication extends Thread
 						for(Game g : acct.pastGames)
 						{
 							g.writeDefault(str, ',');
+							str.append(":");
+							str.append(VocabServer.instance().findAccount(g.getRequestOpponent()).email);
 							str.append(":");
 						}
 						
