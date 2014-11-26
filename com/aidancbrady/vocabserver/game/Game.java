@@ -37,6 +37,15 @@ public class Game
 		opponent = userRequested ? opponentName : userName;
 	}
 	
+	public Game getRequestPair()
+	{
+		Game g = new Game(opponent, user, !userRequested);
+		g.gameType = gameType;
+		g.userTurn = !g.userTurn;
+		
+		return g;
+	}
+	
 	public static Game readDefault(String user, String s)
 	{
 		String[] split = s.split(":");
@@ -74,42 +83,42 @@ public class Game
 		return g;
 	}
 	
-	public void writeDefault(StringBuilder str)
+	public void writeDefault(StringBuilder str, Character split)
 	{
 		str.append(opponent);
-		str.append(":");
+		str.append(split);
 		str.append(gameType);
-		str.append(":");
+		str.append(split);
 		str.append(userTurn);
-		str.append(":");
+		str.append(split);
 		
-		writeScoreList(userPoints, str);
-		writeScoreList(opponentPoints, str);
+		writeScoreList(userPoints, str, split);
+		writeScoreList(opponentPoints, str, split);
 	}
 	
-	public void writeRequest(StringBuilder str)
+	public void writeRequest(StringBuilder str, Character split)
 	{
 		str.append(userRequested);
-		str.append(":");
+		str.append(split);
 		str.append(getRequestOpponent());
-		str.append(":");
+		str.append(split);
 		str.append(gameType);
-		str.append(":");
+		str.append(split);
 		str.append(userTurn);
-		str.append(":");
+		str.append(split);
 		
-		writeScoreList(userPoints, str);
+		writeScoreList(userPoints, str, split);
 	}
 	
-	public void writeScoreList(List<Integer> score, StringBuilder str)
+	public void writeScoreList(List<Integer> score, StringBuilder str, Character split)
 	{
 		str.append(score.size());
-		str.append(":");
+		str.append(split);
 		
 		for(int i : score)
 		{
 			str.append(i);
-			str.append(":");
+			str.append(split);
 		}
 	}
 	

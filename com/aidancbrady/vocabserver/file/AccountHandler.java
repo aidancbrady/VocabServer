@@ -196,7 +196,7 @@ public final class AccountHandler
 				
 				for(Game g : acct.activeGames)
 				{
-					g.writeDefault(activeGames);
+					g.writeDefault(activeGames, ':');
 					activeGames.append(",");
 				}
 				
@@ -204,7 +204,7 @@ public final class AccountHandler
 				
 				for(Game g : acct.requestGames)
 				{
-					g.writeRequest(requestGames);
+					g.writeRequest(requestGames, ':');
 					activeGames.append(",");
 				}
 				
@@ -212,7 +212,7 @@ public final class AccountHandler
 				
 				for(Game g : acct.pastGames)
 				{
-					g.writeDefault(pastGames);
+					g.writeDefault(pastGames, ':');
 					pastGames.append(",");
 				}
 				

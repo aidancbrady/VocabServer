@@ -10,6 +10,7 @@ import java.util.List;
 import com.aidancbrady.vocabserver.Account;
 import com.aidancbrady.vocabserver.AccountParser;
 import com.aidancbrady.vocabserver.VocabServer;
+import com.aidancbrady.vocabserver.game.Game;
 
 public class Communication extends Thread
 {
@@ -316,6 +317,89 @@ public class Communication extends Thread
 						writer.println("REJECT:Unable to authenticate");
 					}
 				}
+				else if(msg[0].equals("LGAMES"))
+				{
+					Account acct = null;
+					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						StringBuilder str = new StringBuilder();
+						
+						for(Game g : acct.activeGames)
+						{
+							g.writeDefault(str, ',');
+							str.append(":");
+						}
+						
+						writer.println("ACCEPT:" + str);
+						
+						StringBuilder str1 = new StringBuilder();
+						
+						for(Game g : acct.requestGames)
+						{
+							g.writeRequest(str1, ',');
+							str1.append(":");
+						}
+						
+						writer.println("CONT:" + str1);
+					}
+					else {
+						writer.println("REJECT:Unable to authenticate");
+					}
+				}
+				else if(msg[0].equals("LPAST"))
+				{
+					Account acct = null;
+					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						StringBuilder str = new StringBuilder();
+						
+						for(Game g : acct.pastGames)
+						{
+							g.writeDefault(str, ',');
+							str.append(":");
+						}
+						
+						writer.println("ACCEPT:" + str);
+					}
+					else {
+						writer.println("REJECT:Unable to authenticate");
+					}
+				}
+				else if(msg[0].equals("CONFGAME"))
+				{
+					Account acct = null;
+					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						Account reqAcct = null;
+						
+						if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
+						{
+							int status = canStartGame(acct, reqAcct);
+							
+							if(status == 0)
+							{
+								writer.println("ACCEPT");
+							}
+							else if(status == 1)
+							{
+								writer.println("REJECT:You already have a game in progress with " + reqAcct.username + ".");
+							}
+							else if(status == 2)
+							{
+								writer.println("REJECT:You already have sent " + reqAcct.username + " a game request.");
+							}
+						}
+						else {
+							writer.println("REJECT:Account doesn't exist");
+						}
+					}
+					else {
+						writer.println("REJECT:Unable to authenticate");
+					}
+				}
 				else if(msg[0].equals("NEWGAME"))
 				{
 					Account acct = null;
@@ -326,7 +410,27 @@ public class Communication extends Thread
 						
 						if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
 						{
-							writer.println("ACCEPT");
+							int status = canStartGame(acct, reqAcct);
+							
+							if(status == 0)
+							{
+								Game game = new Game(acct.username, reqAcct.username, true);
+								game.gameType = Integer.parseInt(msg[3]);
+								game.userPoints.add(Integer.parseInt(msg[4]));
+								
+								acct.requestGames.add(game);
+								reqAcct.requestGames.add(game.getRequestPair());
+								
+								writer.println("ACCEPT");
+							}
+							else if(status == 1)
+							{
+								writer.println("REJECT:You already have a game in progress with " + reqAcct.username + ".");
+							}
+							else if(status == 2)
+							{
+								writer.println("REJECT:You already have sent " + reqAcct.username + " a game request.");
+							}
 						}
 						else {
 							writer.println("REJECT:Account doesn't exist");
@@ -353,6 +457,34 @@ public class Communication extends Thread
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public int canStartGame(Account acct, Account reqAcct)
+	{
+		int status = 0;
+		
+		for(Game g : reqAcct.activeGames)
+		{
+			if(g.hasUser(acct.username))
+			{
+				status = 1;
+				break;
+			}
+		}
+		
+		if(status == 0)
+		{
+			for(Game g : reqAcct.requestGames)
+			{
+				if(g.hasUser(acct.username))
+				{
+					status = 2;
+					break;
+				}
+			}
+		}
+		
+		return status;
 	}
 	
 	public void close()
