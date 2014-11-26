@@ -124,29 +124,7 @@ public final class AccountHandler
 			
 			for(Account acct : VocabServer.instance().accounts)
 			{
-				for(Iterator<String> iter = acct.friends.iterator(); iter.hasNext();)
-				{
-					if(VocabServer.instance().findAccount(iter.next()) == null)
-					{
-						iter.remove();
-					}
-				}
-				
-				for(Iterator<String> iter = acct.requests.iterator(); iter.hasNext();)
-				{
-					if(VocabServer.instance().findAccount(iter.next()) == null)
-					{
-						iter.remove();
-					}
-				}
-				
-				for(Iterator<String> iter = acct.requested.iterator(); iter.hasNext();)
-				{
-					if(VocabServer.instance().findAccount(iter.next()) == null)
-					{
-						iter.remove();
-					}
-				}
+				checkValidity(acct);
 			}
 			
 			reader.close();
@@ -238,6 +216,71 @@ public final class AccountHandler
 		} catch(Exception e) {
 			System.err.println("An error occured while saving to data file:");
 			e.printStackTrace();
+		}
+	}
+	
+	public static void assertValidity()
+	{
+		for(Account acct : VocabServer.instance().accounts)
+		{
+			checkValidity(acct);
+		}
+	}
+	
+	public static void checkValidity(Account acct)
+	{
+		for(Iterator<String> iter = acct.friends.iterator(); iter.hasNext();)
+		{
+			if(VocabServer.instance().findAccount(iter.next()) == null)
+			{
+				iter.remove();
+			}
+		}
+		
+		for(Iterator<String> iter = acct.requests.iterator(); iter.hasNext();)
+		{
+			if(VocabServer.instance().findAccount(iter.next()) == null)
+			{
+				iter.remove();
+			}
+		}
+		
+		for(Iterator<String> iter = acct.requested.iterator(); iter.hasNext();)
+		{
+			if(VocabServer.instance().findAccount(iter.next()) == null)
+			{
+				iter.remove();
+			}
+		}
+		
+		for(Iterator<Game> iter = acct.activeGames.iterator(); iter.hasNext();)
+		{
+			Game g = iter.next();
+			
+			if(VocabServer.instance().findAccount(g.opponent) == null)
+			{
+				iter.remove();
+			}
+		}
+		
+		for(Iterator<Game> iter = acct.requestGames.iterator(); iter.hasNext();)
+		{
+			Game g = iter.next();
+			
+			if(VocabServer.instance().findAccount(g.getRequestOpponent()) == null)
+			{
+				iter.remove();
+			}
+		}
+		
+		for(Iterator<Game> iter = acct.pastGames.iterator(); iter.hasNext();)
+		{
+			Game g = iter.next();
+			
+			if(VocabServer.instance().findAccount(g.opponent) == null)
+			{
+				iter.remove();
+			}
 		}
 	}
 	

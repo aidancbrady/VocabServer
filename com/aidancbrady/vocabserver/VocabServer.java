@@ -69,6 +69,7 @@ public class VocabServer
 						if(findAccount(account) != null)
 						{
 							accounts.remove(findAccount(account));
+							AccountHandler.assertValidity();
 							System.out.println("Removed account '" + account + "'");
 						}
 						else {
@@ -88,6 +89,11 @@ public class VocabServer
 				{
 					AccountHandler.load();
 					System.out.println("Successfully loaded account data");
+				}
+				else if(s.equals("validify"))
+				{
+					AccountHandler.assertValidity();
+					System.out.println("Successfully asserted validity of user list");
 				}
 				else if(s.startsWith("info"))
 				{
@@ -126,11 +132,13 @@ public class VocabServer
 							System.out.println("Username: " + acct.username);
 							System.out.println("Email: " + acct.email);
 							System.out.println("Password: " + acct.password);
-							System.out.println("Games won: " + acct.gamesWon);
-							System.out.println("Games lost: " + acct.gamesLost);
+							System.out.println("Score: " + acct.gamesWon + "-" + acct.gamesLost);
 							System.out.println("Friends: " + friends);
 							System.out.println("Requests: " + requests);
 							System.out.println("Requested: " + requested);
+							System.out.println("Active games: " + acct.activeGames.size());
+							System.out.println("Request games: " + acct.requestGames.size());
+							System.out.println("Past games: " + acct.pastGames.size());
 						}
 						else {
 							System.out.println("Account '" + account + "' does not exist");
