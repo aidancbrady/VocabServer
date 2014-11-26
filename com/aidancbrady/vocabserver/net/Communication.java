@@ -316,6 +316,34 @@ public class Communication extends Thread
 						writer.println("REJECT:Unable to authenticate");
 					}
 				}
+				else if(msg[0].equals("NEWGAME"))
+				{
+					Account acct = null;
+					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						Account reqAcct = null;
+						
+						if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
+						{
+							writer.println("ACCEPT");
+						}
+						else {
+							writer.println("REJECT:Account doesn't exist");
+						}
+					}
+					else {
+						writer.println("REJECT:Unable to authenticate");
+					}
+				}
+				else if(msg[0].equals("FINISH"))
+				{
+					
+				}
+				else if(msg[0].equals("ACCEPTGAME"))
+				{
+					
+				}
 			}
 			
 			writer.flush();

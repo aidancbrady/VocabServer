@@ -1,5 +1,8 @@
 package com.aidancbrady.vocabserver.game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Game 
 {
 	public String user;
@@ -10,8 +13,8 @@ public class Game
 	public boolean userTurn;
 	
 	/** If this is a request, this number will be the score of the requester. */
-	public int userScore;
-	public int opponentScore;
+	public List<Integer> userPoints = new ArrayList<Integer>();
+	public List<Integer> opponentPoints = new ArrayList<Integer>();
 	
 	/** True if the active user requested this game, if this is the case then 
 	 * "user" represents the active user, and "opponent" represents the other
@@ -45,8 +48,10 @@ public class Game
 		
 		Game g = new Game(user, split[0]);
 		g.gameType = Integer.parseInt(split[1]);
-		g.setScore(Integer.parseInt(split[2]), Integer.parseInt(split[3]));
-		g.userTurn = Boolean.parseBoolean(split[4]);
+		g.userTurn = Boolean.parseBoolean(split[2]);
+		
+		int index = g.readScoreList(split, 3, true);
+		g.readScoreList(split, index, false);
 		
 		return g;
 	}
@@ -62,8 +67,9 @@ public class Game
 		
 		Game g = new Game(user, split[1], Boolean.parseBoolean(split[0]));
 		g.gameType = Integer.parseInt(split[2]);
-		g.userScore = Integer.parseInt(split[3]);
-		g.userTurn = Boolean.parseBoolean(split[4]);
+		g.userTurn = Boolean.parseBoolean(split[3]);
+		
+		g.readScoreList(split, 4, true);
 		
 		return g;
 	}
@@ -74,27 +80,11 @@ public class Game
 		str.append(":");
 		str.append(gameType);
 		str.append(":");
-		str.append(userScore);
-		str.append(":");
-		str.append(opponentScore);
-		str.append(":");
 		str.append(userTurn);
-	}
-	
-	public String getRequesterName()
-	{
-		return userRequested ? user : opponent;
-	}
-	
-	public String getRequestOpponent()
-	{
-		return userRequested ? opponent : user;
-	}
-	
-	public void setScore(int uScore, int oScore)
-	{
-		userScore = uScore;
-		opponentScore = oScore;
+		str.append(":");
+		
+		writeScoreList(userPoints, str);
+		writeScoreList(opponentPoints, str);
 	}
 	
 	public void writeRequest(StringBuilder str)
@@ -105,9 +95,48 @@ public class Game
 		str.append(":");
 		str.append(gameType);
 		str.append(":");
-		str.append(userScore);
-		str.append(":");
 		str.append(userTurn);
+		str.append(":");
+		
+		writeScoreList(userPoints, str);
+	}
+	
+	public void writeScoreList(List<Integer> score, StringBuilder str)
+	{
+		str.append(score.size());
+		str.append(":");
+		
+		for(int i : score)
+		{
+			str.append(i);
+			str.append(":");
+		}
+	}
+	
+	public int readScoreList(String[] array, int start, boolean user)
+	{
+		List<Integer> list = new ArrayList<Integer>();
+		
+		int size = Integer.parseInt(array[start]);
+		int maxIndex = size;
+		
+		for(int i = 0; i < size; i++)
+		{
+			list.add(Integer.parseInt(array[start+1+i]));
+			maxIndex = start+1+i;
+		}
+		
+		return maxIndex+1;
+	}
+	
+	public String getRequesterName()
+	{
+		return userRequested ? user : opponent;
+	}
+	
+	public String getRequestOpponent()
+	{
+		return userRequested ? opponent : user;
 	}
 	
 	public void setGameType(GameType type)
@@ -127,12 +156,12 @@ public class Game
 	
 	public int getScore(String name)
 	{
-		return user.equals(name) ? userScore : opponentScore;
+		return user.equals(name) ? getUserScore() : getOpponentScore();
 	}
 	
 	public boolean isWinning(String name)
 	{
-		return user.equals(name) ? userScore > opponentScore : opponentScore > userScore;
+		return user.equals(name) ? getUserScore() > getOpponentScore() : getOpponentScore() > getUserScore();
 	}
 	
 	public String getWinning()
@@ -142,7 +171,43 @@ public class Game
 	
 	public boolean isTied()
 	{
-		return userScore == opponentScore;
+		return getUserScore() == getOpponentScore();
+	}
+	
+	public int getUserScore()
+	{
+		int won = 0;
+		
+		for(int i = 0; i < userPoints.size(); i++)
+		{
+			if(i <= opponentPoints.size()-1)
+			{
+				if(userPoints.get(i) >= opponentPoints.get(i))
+				{
+					won++;
+				}
+			}
+		}
+		
+		return won;
+	}
+	
+	public int getOpponentScore()
+	{
+		int won = 0;
+		
+		for(int i = 0; i < opponentPoints.size(); i++)
+		{
+			if(i <= userPoints.size()-1)
+			{
+				if(opponentPoints.get(i) >= userPoints.get(i))
+				{
+					won++;
+				}
+			}
+		}
+		
+		return won;
 	}
 	
 	public static enum GameType
