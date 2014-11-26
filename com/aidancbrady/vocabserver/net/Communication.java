@@ -49,7 +49,7 @@ public class Communication extends Thread
 					
 					if((acct = VocabServer.instance().findAccount(creds)) != null)
 					{
-						writer.println("ACCEPT:" + acct.gamesWon + "," + acct.gamesLost);
+						writer.println("ACCEPT:" + acct.email + "," + acct.gamesWon + "," + acct.gamesLost);
 					}
 					else {
 						writer.println("REJECT:Bad credentials");
@@ -306,7 +306,7 @@ public class Communication extends Thread
 						
 						if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
 						{
-							writer.println("ACCEPT:" + reqAcct.gamesWon + ":" + reqAcct.gamesLost + ":" + reqAcct.email);
+							writer.println("ACCEPT:" + reqAcct.email + ":" + reqAcct.gamesWon + ":" + reqAcct.gamesLost);
 						}
 						else {
 							writer.println("REJECT:Account doesn't exist");
