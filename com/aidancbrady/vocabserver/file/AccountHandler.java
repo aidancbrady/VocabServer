@@ -37,28 +37,20 @@ public final class AccountHandler
 			{
 				String[] split = readingLine.split(",");
 				
-				if(split.length >= 4)
+				if(split.length >= 5)
 				{
-					int won = Integer.parseInt(split[2]);
-					int lost = Integer.parseInt(split[3]);
+					int won = Integer.parseInt(split[3]);
+					int lost = Integer.parseInt(split[4]);
 					
 					List<String> friends = new ArrayList<String>();
 					List<String> requests = new ArrayList<String>();
 					List<String> requested = new ArrayList<String>();
 					
-					if(split.length > 4)
-					{
-						for(String s : split[4].split(":"))
-						{
-							friends.add(s.trim());
-						}
-					}
-					
 					if(split.length > 5)
 					{
 						for(String s : split[5].split(":"))
 						{
-							requests.add(s.trim());
+							friends.add(s.trim());
 						}
 					}
 					
@@ -66,11 +58,19 @@ public final class AccountHandler
 					{
 						for(String s : split[6].split(":"))
 						{
+							requests.add(s.trim());
+						}
+					}
+					
+					if(split.length > 7)
+					{
+						for(String s : split[7].split(":"))
+						{
 							requested.add(s.trim());
 						}
 					}
 					
-					VocabServer.instance().accounts.add(new Account(split[0], split[1]).setGamesWon(won).setGamesLost(lost).setFriends(friends).setRequests(requests).setRequested(requested));
+					VocabServer.instance().accounts.add(new Account(split[0], split[1], split[2]).setGamesWon(won).setGamesLost(lost).setFriends(friends).setRequests(requests).setRequested(requested));
 				}
 			}
 			
@@ -148,7 +148,7 @@ public final class AccountHandler
 					requested.append(":");
 				}
 				
-				writer.append(acct.username + "," + acct.password + "," + acct.gamesWon + "," + acct.gamesLost + "," + friends + "," + requests + "," + requested);
+				writer.append(acct.username + "," + acct.email + "," + acct.password + "," + acct.gamesWon + "," + acct.gamesLost + "," + friends + "," + requests + "," + requested);
 				writer.newLine();
 			}
 			

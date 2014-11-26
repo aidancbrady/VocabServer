@@ -59,7 +59,7 @@ public class Communication extends Thread
 				{
 					String[] creds = msg[1].split(",");
 					
-					System.out.println(socket.getInetAddress() + " attempted to register with creds " + creds[0] + ", " + creds[1]);
+					System.out.println(socket.getInetAddress() + " attempted to register with creds " + creds[0] + ", " + creds[1] + ", " + creds[2]);
 					
 					if(VocabServer.instance().findAccount(creds[0]) != null)
 					{
@@ -69,19 +69,19 @@ public class Communication extends Thread
 					{
 						writer.println("REJECT:Username must be at or below 16 characters");
 					}
-					else if(creds[1].trim().length() > 16)
+					else if(creds[2].trim().length() > 16)
 					{
 						writer.println("REJECT:Password must be at or below 16 characters");
 					}
-					else if(creds[1].trim().length() < 6)
+					else if(creds[2].trim().length() < 6)
 					{
 						writer.println("REJECT:Password must be at least 6 characters");
 					}
-					else if(creds[0].trim().contains(" ") || creds[1].trim().contains(" "))
+					else if(creds[0].trim().contains(" ") || creds[1].trim().contains(" ") || creds[2].trim().contains(" "))
 					{
-						writer.println("REJECT:Username and password cannot contain spaces");
+						writer.println("REJECT:Username, email, and password cannot contain spaces");
 					}
-					else if(!AccountParser.isValidCredential(creds[0]) || !AccountParser.isValidCredential(creds[1]))
+					else if(!AccountParser.isValidCredential(creds[0], false) || !AccountParser.isValidCredential(creds[1], true) || !AccountParser.isValidCredential(creds[2], false))
 					{
 						writer.println("REJECT:Special characters are not allowed");
 					}
@@ -298,7 +298,23 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("GETINFO"))
 				{
+					Account acct = null;
 					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						Account reqAcct = null;
+						
+						if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
+						{
+							writer.println("ACCEPT:" + reqAcct.gamesWon + ":" + reqAcct.gamesLost + ":" + reqAcct.email);
+						}
+						else {
+							writer.println("REJECT:Account doesn't exist");
+						}
+					}
+					else {
+						writer.println("REJECT:Unable to authenticate");
+					}
 				}
 			}
 			

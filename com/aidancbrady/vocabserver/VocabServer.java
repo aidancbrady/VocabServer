@@ -56,7 +56,7 @@ public class VocabServer
 					
 					for(Account account : accounts)
 					{
-						System.out.println(account.username + " " + account.password + " " + account.gamesWon + " " + account.gamesLost);
+						System.out.println(account.username + " " + account.email + " " + account.password);
 					}
 				}
 				else if(s.startsWith("delete") || s.startsWith("remove"))
@@ -82,6 +82,11 @@ public class VocabServer
 				{
 					AccountHandler.save();
 					System.out.println("Successfully saved account data");
+				}
+				else if(s.equals("load"))
+				{
+					AccountHandler.load();
+					System.out.println("Successfully loaded account data");
 				}
 				else if(s.startsWith("info"))
 				{
@@ -118,6 +123,7 @@ public class VocabServer
 							
 							System.out.println("Account details:");
 							System.out.println("Username: " + acct.username);
+							System.out.println("Email: " + acct.email);
 							System.out.println("Password: " + acct.password);
 							System.out.println("Games won: " + acct.gamesWon);
 							System.out.println("Games lost: " + acct.gamesLost);
@@ -137,12 +143,12 @@ public class VocabServer
 				{
 					String[] split = s.split(" ");
 					
-					if(split.length > 2)
+					if(split.length == 4)
 					{
-						if(!split[1].trim().isEmpty() && split[2].trim().length() >= 6)
+						if(AccountParser.isValidCredential(split[1].trim(), false) && AccountParser.isValidCredential(split[2].trim(), true) && AccountParser.isValidCredential(split[3].trim(), false))
 						{
-							accounts.add(new Account(split[1].trim(), split[2].trim()));
-							System.out.println("Created account '" + split[1].trim() + "' '" + split[2].trim() + "'");
+							accounts.add(new Account(split[1].trim(), split[2].trim(), split[3].trim()));
+							System.out.println("Created account '" + split[1].trim() + "' '" + split[2].trim() + "' '" + split[3].trim() + "'");
 						}
 						else {
 							System.out.println("Invalid amount of chars");
@@ -206,7 +212,7 @@ public class VocabServer
 	
 	public void addAccount(String[] creds)
 	{
-		accounts.add(new Account(creds[0].trim(), creds[1].trim()));
+		accounts.add(new Account(creds[0].trim(), creds[1].trim(), creds[2].trim()));
 	}
 	
 	public static VocabServer instance()
