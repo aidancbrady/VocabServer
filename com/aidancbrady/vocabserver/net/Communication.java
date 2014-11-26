@@ -289,11 +289,11 @@ public class Communication extends Thread
 							writer.println("ACCEPT");
 						}
 						else {
-							writer.println("REJECT:Unable to authenticate");
+							writer.println("REJECT:Account doesn't exist");
 						}
 					}
 					else {
-						writer.println("REJECT:Account doesn't exist");
+						writer.println("REJECT:Unable to authenticate");
 					}
 				}
 				else if(msg[0].equals("GETINFO"))
