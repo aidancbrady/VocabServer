@@ -7,6 +7,8 @@ public class Game
 	
 	public int gameType;
 	
+	public boolean userTurn;
+	
 	/** If this is a request, this number will be the score of the requester. */
 	public int userScore;
 	public int opponentScore;
@@ -44,6 +46,7 @@ public class Game
 		Game g = new Game(user, split[0]);
 		g.gameType = Integer.parseInt(split[1]);
 		g.setScore(Integer.parseInt(split[2]), Integer.parseInt(split[3]));
+		g.userTurn = Boolean.parseBoolean(split[4]);
 		
 		return g;
 	}
@@ -60,6 +63,7 @@ public class Game
 		Game g = new Game(user, split[1], Boolean.parseBoolean(split[0]));
 		g.gameType = Integer.parseInt(split[2]);
 		g.userScore = Integer.parseInt(split[3]);
+		g.userTurn = Boolean.parseBoolean(split[4]);
 		
 		return g;
 	}
@@ -73,6 +77,8 @@ public class Game
 		str.append(userScore);
 		str.append(":");
 		str.append(opponentScore);
+		str.append(":");
+		str.append(userTurn);
 	}
 	
 	public String getRequesterName()
@@ -100,6 +106,8 @@ public class Game
 		str.append(gameType);
 		str.append(":");
 		str.append(userScore);
+		str.append(":");
+		str.append(userTurn);
 	}
 	
 	public void setGameType(GameType type)
