@@ -112,8 +112,8 @@ public class Communication extends Thread
 						
 						for(String s : acct.requested)
 						{
-							str.append(s);
-							str.append(":");
+							str1.append(s);
+							str1.append(":");
 						}
 						
 						writer.println("CONT:" + str1);
@@ -221,7 +221,7 @@ public class Communication extends Thread
 						for(String s : acct.requests)
 						{
 							str.append(s);
-							str.append(",");
+							str.append(":");
 						}
 						
 						writer.println("ACCEPT:" + str);
