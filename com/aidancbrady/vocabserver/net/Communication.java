@@ -485,7 +485,7 @@ public class Communication extends Thread
 						writer.println("REJECT:Unable to authenticate");
 					}
 				}
-				else if(msg[0].equals("ACCEPTGAME"))
+				else if(msg[0].equals("GAMEREQCONF"))
 				{
 					Account acct = null;
 					
