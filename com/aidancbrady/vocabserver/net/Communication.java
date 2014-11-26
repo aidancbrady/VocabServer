@@ -185,7 +185,7 @@ public class Communication extends Thread
 							{
 								if(!iterAcct.username.equals(acct.username))
 								{
-									accts.add(acct.username);
+									accts.add(iterAcct.username);
 									i++;
 								}
 							}
@@ -242,7 +242,7 @@ public class Communication extends Thread
 						{
 							if(acct.friends.contains(reqAcct.username))
 							{
-								writer.println("REJECT:User already in your friends list");
+								writer.println("REJECT:User is already in your friends list");
 							}
 							else {
 								if(!reqAcct.requests.contains(acct.username))
