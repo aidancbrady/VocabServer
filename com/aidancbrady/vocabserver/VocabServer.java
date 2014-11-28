@@ -193,11 +193,11 @@ public class VocabServer
 		System.exit(0);
 	}
 	
-	public Account findAccount(String[] creds)
+	public Account findAccount(String username, String password)
 	{
 		for(Account account : accounts)
 		{
-			if(account.username.equals(creds[0].trim()) && account.password.equals(creds[1].trim()))
+			if(account.username.equals(username) && account.password.equals(password))
 			{
 				return account;
 			}
@@ -310,9 +310,9 @@ public class VocabServer
 		return null;
 	}
 	
-	public void addAccount(String[] creds)
+	public void addAccount(String username, String email, String password)
 	{
-		accounts.add(new Account(creds[0].trim(), creds[1].trim(), creds[2].trim()));
+		accounts.add(new Account(username.trim(), email.trim(), password.trim()));
 	}
 	
 	public static VocabServer instance()

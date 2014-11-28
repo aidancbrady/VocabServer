@@ -6,9 +6,12 @@ public class AccountParser
 	
 	public static boolean isValidCredential(String str, boolean email)
 	{
-		if(!email && !isValidStr(str))
+		if(!email)
 		{
-			return false;
+			if(!isValidStr(str))
+			{
+				return false;
+			}
 		}
 		else {
 			if(!isValidStr(str))

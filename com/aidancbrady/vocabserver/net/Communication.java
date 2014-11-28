@@ -42,15 +42,13 @@ public class Communication extends Thread
 				
 				if(msg[0].equals("LOGIN"))
 				{
-					String[] creds = msg[1].split(",");
-					
-					System.out.println(socket.getInetAddress() + " attempted to log in with creds " + creds[0] + ", " + creds[1]);
+					System.out.println(socket.getInetAddress() + " attempted to log in with creds " + msg[1] + ", " + msg[2]);
 					
 					Account acct = null;
 					
-					if((acct = VocabServer.instance().findAccount(creds)) != null)
+					if((acct = VocabServer.instance().findAccount(msg[1], msg[2])) != null)
 					{
-						writer.println("ACCEPT:" + acct.email + "," + acct.gamesWon + "," + acct.gamesLost);
+						writer.println("ACCEPT:" + acct.email + ":" + acct.gamesWon + ":" + acct.gamesLost);
 					}
 					else {
 						writer.println("REJECT:Bad credentials");
@@ -58,35 +56,33 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("REGISTER"))
 				{
-					String[] creds = msg[1].split(",");
+					System.out.println(socket.getInetAddress() + " attempted to register with creds " + msg[1] + ", " + msg[2] + ", " + msg[3]);
 					
-					System.out.println(socket.getInetAddress() + " attempted to register with creds " + creds[0] + ", " + creds[1] + ", " + creds[2]);
-					
-					if(VocabServer.instance().findAccount(creds[0]) != null)
+					if(VocabServer.instance().findAccount(msg[1]) != null)
 					{
 						writer.println("REJECT:Username already in use");
 					}
-					else if(creds[0].trim().length() > 16)
+					else if(msg[1].trim().length() > 16)
 					{
 						writer.println("REJECT:Username must be at or below 16 characters");
 					}
-					else if(creds[2].trim().length() > 16)
+					else if(msg[3].trim().length() > 16)
 					{
 						writer.println("REJECT:Password must be at or below 16 characters");
 					}
-					else if(creds[2].trim().length() < 6)
+					else if(msg[3].trim().length() < 6)
 					{
 						writer.println("REJECT:Password must be at least 6 characters");
 					}
-					else if(!AccountParser.isValidCredential(creds[0], false) || !AccountParser.isValidCredential(creds[1], true) || !AccountParser.isValidCredential(creds[2], false))
+					else if(!AccountParser.isValidCredential(msg[1], false) || !AccountParser.isValidCredential(msg[2], true) || !AccountParser.isValidCredential(msg[3], false))
 					{
 						writer.println("REJECT:Special characters are not allowed");
 					}
 					else {
 						writer.println("ACCEPT");
-						VocabServer.instance().addAccount(creds);
+						VocabServer.instance().addAccount(msg[1], msg[2], msg[3]);
 						
-						System.out.println(socket.getInetAddress() + " has created account " + creds[0].trim());
+						System.out.println(socket.getInetAddress() + " has created account " + msg[1].trim());
 					}
 				}
 				else if(msg[0].equals("LFRIENDS"))
