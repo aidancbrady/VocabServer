@@ -416,6 +416,8 @@ public class Communication extends Thread
 								Game game = new Game(acct.username, reqAcct.username, true);
 								game.gameType = Integer.parseInt(msg[3]);
 								game.userPoints.add(Integer.parseInt(msg[4]));
+								game.listIdentifier = msg[5].trim();
+								game.readWordList(msg[5].trim());
 								game.userTurn = false;
 								
 								acct.requestGames.add(game);
