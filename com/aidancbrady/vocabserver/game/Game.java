@@ -37,7 +37,7 @@ public class Game
 	public boolean activeRequested;
 	
 	/**
-	 * List of 10 words that were fabricated by the game host and are still in action.
+	 * List of 10 words that were fabricated by the game host and are still in use.
 	 */
 	public List<String> activeWords = new ArrayList<String>();
 	
@@ -115,7 +115,9 @@ public class Game
 		g.userTurn = Boolean.parseBoolean(split[2]);
 		
 		int index = g.readScoreList(split, 3, true);
-		g.readScoreList(split, index, false);
+		index = g.readScoreList(split, index, false);
+		
+		g.readWordList(split[index]);
 		
 		return g;
 	}
@@ -133,7 +135,9 @@ public class Game
 		g.gameType = Integer.parseInt(split[2]);
 		g.userTurn = Boolean.parseBoolean(split[3]);
 		
-		g.readScoreList(split, 4, true);
+		int index = g.readScoreList(split, 4, true);
+		
+		g.readWordList(split[index]);
 		
 		return g;
 	}
@@ -149,6 +153,9 @@ public class Game
 		
 		writeScoreList(userPoints, str, splitter);
 		writeScoreList(opponentPoints, str, splitter);
+		
+		writeWordList(str);
+		str.append(splitter);
 	}
 	
 	public void writeRequest(StringBuilder str, Character splitter)
@@ -163,6 +170,9 @@ public class Game
 		str.append(splitter);
 		
 		writeScoreList(userPoints, str, splitter);
+		
+		writeWordList(str);
+		str.append(splitter);
 	}
 	
 	public void writeScoreList(List<Integer> score, StringBuilder str, Character split)
@@ -191,6 +201,25 @@ public class Game
 		}
 		
 		return maxIndex+1;
+	}
+	
+	public void writeWordList(StringBuilder str)
+	{
+		for(String s : activeWords)
+		{
+			str.append(s);
+			str.append("&");
+		}
+	}
+	
+	public void readWordList(String s)
+	{
+		String[] split = s.split("&");
+		
+		for(String word : split)
+		{
+			activeWords.add(word.trim());
+		}
 	}
 	
 	public String getRequesterName()

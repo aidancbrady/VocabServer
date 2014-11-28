@@ -2,7 +2,7 @@ package com.aidancbrady.vocabserver;
 
 public class AccountParser 
 {
-	public static Character[] badChars = new Character[] {',', ':', '&', ' '};
+	public static Character[] badChars = new Character[] {',', ':', '&', ' ', '|'};
 	
 	public static boolean isValidCredential(String str, boolean email)
 	{
