@@ -122,10 +122,7 @@ public final class AccountHandler
 				}
 			}
 			
-			for(Account acct : VocabServer.instance().accounts)
-			{
-				checkValidity(acct);
-			}
+			assertValidity();
 			
 			reader.close();
 		} catch(Exception e) {
