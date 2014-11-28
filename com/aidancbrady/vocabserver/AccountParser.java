@@ -2,28 +2,41 @@ package com.aidancbrady.vocabserver;
 
 public class AccountParser 
 {
+	public static Character[] badChars = new Character[] {',', ':', '&', ' '};
+	
 	public static boolean isValidCredential(String str, boolean email)
 	{
-		if(!email)
+		if(!email && !isValidStr(str))
 		{
-			for(Character c : str.toCharArray())
+			return false;
+		}
+		else {
+			if(!isValidStr(str))
 			{
-				if(!Character.isDigit(c) && !Character.isLetter(c))
+				return false;
+			}
+			
+			str = str.replace(".", "&|~|&");
+			
+			if(str.split("@").length != 2 || str.split("&|~|&").length < 2)
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public static boolean isValidStr(String... creds)
+	{
+		for(String s : creds)
+		{
+			for(Character c : badChars)
+			{
+				if(s.trim().contains(c.toString()))
 				{
 					return false;
 				}
-			}
-		}
-		else {
-			str = str.replace(".", "&|~|&");
-			
-			if(str.contains(",") || str.contains(":"))
-			{
-				return false;
-			}
-			else if(str.split("@").length != 2 || str.split("&|~|&").length < 2)
-			{
-				return false;
 			}
 		}
 		

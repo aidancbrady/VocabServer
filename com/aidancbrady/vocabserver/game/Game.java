@@ -36,6 +36,11 @@ public class Game
 	 * */
 	public boolean activeRequested;
 	
+	/**
+	 * List of 10 words that were fabricated by the game host and are still in action.
+	 */
+	public List<String> activeWords = new ArrayList<String>();
+	
 	/** Only used client-side */
 	public boolean isRequest;
 	

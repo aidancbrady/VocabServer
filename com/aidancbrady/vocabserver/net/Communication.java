@@ -78,10 +78,6 @@ public class Communication extends Thread
 					{
 						writer.println("REJECT:Password must be at least 6 characters");
 					}
-					else if(creds[0].trim().contains(" ") || creds[1].trim().contains(" ") || creds[2].trim().contains(" "))
-					{
-						writer.println("REJECT:Username, email, and password cannot contain spaces");
-					}
 					else if(!AccountParser.isValidCredential(creds[0], false) || !AccountParser.isValidCredential(creds[1], true) || !AccountParser.isValidCredential(creds[2], false))
 					{
 						writer.println("REJECT:Special characters are not allowed");
@@ -567,6 +563,44 @@ public class Communication extends Thread
 						}
 						else {
 							writer.println("REJECT:Account doesn't exist");
+						}
+					}
+					else {
+						writer.println("REJECT:Unable to authenticate");
+					}
+				}
+				else if(msg[0].equals("CHANGEPASS"))
+				{
+					Account acct = null;
+					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						String current = msg[2].trim();
+						
+						if(acct.password.equals(current))
+						{
+							String newPass = msg[3].trim();
+							
+							if(newPass.length() > 16)
+							{
+								writer.println("REJECT:Password must be at or below 16 characters");
+							}
+							else if(newPass.length() < 6)
+							{
+								writer.println("REJECT:Password must be at least 6 characters");
+							}
+							else if(!AccountParser.isValidCredential(newPass, false))
+							{
+								writer.println("REJECT:Special characters are not allowed");
+							}
+							else {
+								acct.setPassword(newPass);
+								
+								writer.println("ACCEPT");
+							}
+						}
+						else {
+							writer.println("REJECT:Current password does not match.");
 						}
 					}
 					else {
