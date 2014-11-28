@@ -455,13 +455,34 @@ public class Communication extends Thread
 							if(g != null)
 							{
 								Game pair = VocabServer.instance().findActiveGamePair(g);
-								int score = Integer.parseInt(msg[3]);
 								
-								g.userTurn = false;
-								g.userPoints.add(score);
-								
-								pair.userTurn = true;
-								pair.opponentPoints.add(score);
+								if(!g.hasWinner())
+								{
+									int score = Integer.parseInt(msg[3]);
+									
+									g.userTurn = false;
+									g.userPoints.add(score);
+									
+									pair.userTurn = true;
+									pair.opponentPoints.add(score);
+								}
+								else {
+									acct.activeGames.remove(g);
+									reqAcct.activeGames.remove(pair);
+									
+									acct.pastGames.add(g.convertToPast());
+									reqAcct.pastGames.add(pair.convertToPast());
+									
+									if(g.getWinner().equals(acct.username))
+									{
+										acct.gamesWon++;
+										reqAcct.gamesLost++;
+									}
+									else {
+										reqAcct.gamesWon++;
+										acct.gamesLost++;
+									}
+								}
 								
 								writer.println("ACCEPT");
 							}

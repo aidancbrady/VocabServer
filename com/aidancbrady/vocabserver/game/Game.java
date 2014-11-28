@@ -36,9 +36,7 @@ public class Game
 	 * */
 	public boolean activeRequested;
 	
-	/**
-	 * List of 10 words that were fabricated by the game host and are still in use.
-	 */
+	/** List of 10 words that were fabricated by the game host and are still in use. */
 	public List<String> activeWords = new ArrayList<String>();
 	
 	/** Only used client-side */
@@ -97,6 +95,15 @@ public class Game
 			opponentPoints = userPoints;
 			userPoints = new ArrayList<Integer>();
 		}
+		
+		return this;
+	}
+	
+	public Game convertToPast()
+	{
+		userPoints.clear();
+		opponentPoints.clear();
+		activeWords.clear();
 		
 		return this;
 	}
@@ -222,6 +229,18 @@ public class Game
 		}
 	}
 	
+	public String getWinner()
+	{
+		int max = GameType.values()[gameType].getWinningScore();
+		
+		return getUserScore() == max ? user : (getOpponentScore() == max ? opponent : null);
+	}
+	
+	public boolean hasWinner()
+	{
+		return getWinner() != null;
+	}
+	
 	public String getRequesterName()
 	{
 		return activeRequested ? user : opponent;
@@ -328,8 +347,27 @@ public class Game
 	
 	public static enum GameType
 	{
-		SINGLE,
-		BEST_OF_3,
-		BEST_OF_5;
+		SINGLE(1, "Single Game"),
+		BEST_OF_3(2, "Best of 3"),
+		BEST_OF_5(3, "Best of 5");
+		
+		private String desc;
+		private int max;
+		
+		private GameType(int i, String s)
+		{
+			max = i;
+			desc = s;
+		}
+		
+		public String getDescription()
+		{
+			return desc;
+		}
+		
+		public int getWinningScore()
+		{
+			return max;
+		}
 	}
 }
