@@ -42,7 +42,7 @@ public class Game
 	/** List of 10 words that were fabricated by the game host and are still in use. */
 	public List<String> activeWords = new ArrayList<String>();
 	
-	public String listIdentifier;
+	public String listURL;
 	
 	/** Only used client-side */
 	public boolean isRequest;
@@ -68,7 +68,7 @@ public class Game
 	{
 		Game g = new Game(user, opponent, !activeRequested);
 		g.gameType = gameType;
-		g.listIdentifier = listIdentifier;
+		g.listURL = listURL;
 		g.activeWords = activeWords;
 		g.userTurn = !userTurn;
 		g.userPoints = userPoints;
@@ -90,7 +90,7 @@ public class Game
 		
 		g.userTurn = !userTurn;
 		g.activeWords = activeWords;
-		g.listIdentifier = listIdentifier;
+		g.listURL = listURL;
 		
 		return g;
 	}
@@ -131,7 +131,7 @@ public class Game
 		Game g = new Game(split[0], split[1].trim());
 		g.gameType = Integer.parseInt(split[2]);
 		g.userTurn = Boolean.parseBoolean(split[3]);
-		g.listIdentifier = split[4].trim();
+		g.listURL = split[4].trim();
 		
 		int index = g.readScoreList(split, 5, true);
 		index = g.readScoreList(split, index, false);
@@ -153,7 +153,7 @@ public class Game
 		Game g = new Game(split[1], split[2].trim(), Boolean.parseBoolean(split[0]));
 		g.gameType = Integer.parseInt(split[3]);
 		g.userTurn = Boolean.parseBoolean(split[4]);
-		g.listIdentifier = split[5].trim();
+		g.listURL = split[5].trim();
 		
 		int index = g.readScoreList(split, 6, true);
 		
@@ -172,7 +172,7 @@ public class Game
 		str.append(splitter);
 		str.append(userTurn);
 		str.append(splitter);
-		str.append(listIdentifier);
+		str.append(listURL);
 		str.append(splitter);
 		
 		writeScoreList(userPoints, str, splitter);
@@ -194,7 +194,7 @@ public class Game
 		str.append(splitter);
 		str.append(userTurn);
 		str.append(splitter);
-		str.append(listIdentifier);
+		str.append(listURL);
 		str.append(splitter);
 		
 		writeScoreList(userPoints, str, splitter);
