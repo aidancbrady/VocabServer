@@ -72,7 +72,7 @@ public class Game
 		g.gameType = gameType;
 		g.listIdentifier = listIdentifier;
 		g.activeWords = activeWords;
-		g.userTurn = !g.userTurn;
+		g.userTurn = !userTurn;
 		g.userPoints = userPoints;
 		
 		return g;
@@ -276,7 +276,6 @@ public class Game
 	
 	public String getOtherUser(String s)
 	{
-		System.out.println("");
 		return user.equals(s) ? opponent : user;
 	}
 	
