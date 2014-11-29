@@ -230,6 +230,14 @@ public class Game
 			maxIndex = start+1+i;
 		}
 		
+		if(user)
+		{
+			userPoints = list;
+		}
+		else {
+			opponentPoints = list;
+		}
+		
 		return maxIndex+1;
 	}
 	
