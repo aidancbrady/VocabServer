@@ -109,6 +109,8 @@ public class Game
 			userPoints = new ArrayList<Integer>();
 		}
 		
+		isRequest = false;
+		
 		return this;
 	}
 	
