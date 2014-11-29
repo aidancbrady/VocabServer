@@ -42,7 +42,8 @@ public class Game
 	/** List of 10 words that were fabricated by the game host and are still in use. */
 	public List<String> activeWords = new ArrayList<String>();
 	
-	public String listURL;
+	private String listName;
+	private String listURL;
 	
 	/** Only used client-side */
 	public boolean isRequest;
@@ -68,10 +69,11 @@ public class Game
 	{
 		Game g = new Game(user, opponent, !activeRequested);
 		g.gameType = gameType;
+		g.listName = listName;
 		g.listURL = listURL;
 		g.activeWords = activeWords;
 		g.userTurn = !userTurn;
-		g.userPoints = userPoints;
+		g.userPoints = new ArrayList<Integer>(userPoints);
 		
 		return g;
 	}
@@ -84,12 +86,12 @@ public class Game
 		g.opponent = user;
 		g.user = temp;
 		
-		List<Integer> temp1 = opponentPoints;
-		g.opponentPoints = userPoints;
-		g.userPoints = temp1;
+		g.opponentPoints = new ArrayList<Integer>(userPoints);
+		g.userPoints = new ArrayList<Integer>(opponentPoints);
 		
 		g.userTurn = !userTurn;
 		g.activeWords = activeWords;
+		g.listName = listName;
 		g.listURL = listURL;
 		
 		return g;
@@ -97,7 +99,7 @@ public class Game
 	
 	public Game convertToActive(String userPerspective)
 	{
-		if(!user.equals(userPerspective)) //If requesting user doesn't equal perspective user
+		if(!user.equals(userPerspective)) //If requesting user equals perspective user
 		{
 			String temp = opponent;
 			opponent = user;
@@ -131,9 +133,10 @@ public class Game
 		Game g = new Game(split[0], split[1].trim());
 		g.gameType = Integer.parseInt(split[2]);
 		g.userTurn = Boolean.parseBoolean(split[3]);
-		g.listURL = split[4].trim();
+		g.listName = split[4].trim();
+		g.listURL = split[5].trim();
 		
-		int index = g.readScoreList(split, 5, true);
+		int index = g.readScoreList(split, 6, true);
 		index = g.readScoreList(split, index, false);
 		
 		g.readWordList(split[index]);
@@ -153,9 +156,10 @@ public class Game
 		Game g = new Game(split[1], split[2].trim(), Boolean.parseBoolean(split[0]));
 		g.gameType = Integer.parseInt(split[3]);
 		g.userTurn = Boolean.parseBoolean(split[4]);
-		g.listURL = split[5].trim();
+		g.listName = split[5].trim();
+		g.listURL = split[6].trim();
 		
-		int index = g.readScoreList(split, 6, true);
+		int index = g.readScoreList(split, 7, true);
 		
 		g.readWordList(split[index]);
 		
@@ -171,6 +175,8 @@ public class Game
 		str.append(gameType);
 		str.append(splitter);
 		str.append(userTurn);
+		str.append(splitter);
+		str.append(listName);
 		str.append(splitter);
 		str.append(listURL);
 		str.append(splitter);
@@ -193,6 +199,8 @@ public class Game
 		str.append(gameType);
 		str.append(splitter);
 		str.append(userTurn);
+		str.append(splitter);
+		str.append(listName);
 		str.append(splitter);
 		str.append(listURL);
 		str.append(splitter);
@@ -285,6 +293,22 @@ public class Game
 		int max = GameType.values()[gameType].getWinningScore();
 		
 		return getUserScore() == max || getOpponentScore() == max;
+	}
+	
+	public String getListName()
+	{
+		return listName;
+	}
+	
+	public String getListURL()
+	{
+		return listURL;
+	}
+	
+	public void setList(String name, String url)
+	{
+		listName = name;
+		listURL = url;
 	}
 	
 	public String getRequester()

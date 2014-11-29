@@ -416,8 +416,8 @@ public class Communication extends Thread
 								Game game = new Game(acct.username, reqAcct.username, true);
 								game.gameType = Integer.parseInt(msg[3]);
 								game.userPoints.add(Integer.parseInt(msg[4]));
-								game.listURL = msg[5].trim();
-								game.readWordList(msg[6].trim());
+								game.setList(msg[5].trim(), msg[6].trim());
+								game.readWordList(msg[7].trim());
 								game.userTurn = false;
 								
 								acct.requestGames.add(game);
@@ -458,6 +458,8 @@ public class Communication extends Thread
 							{
 								Game pair = VocabServer.instance().findActiveGamePair(g);
 								int score = Integer.parseInt(msg[3]);
+								
+								System.out.println("COMPGAME " + (g == pair));
 								
 								g.userTurn = false;
 								g.userPoints.add(score);
