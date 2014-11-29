@@ -248,11 +248,21 @@ public class Game
 			str.append(s);
 			str.append("&");
 		}
+		
+		if(activeWords.isEmpty())
+		{
+			str.append("null");
+		}
 	}
 	
 	public void readWordList(String s)
 	{
 		String[] split = s.split("&");
+		
+		if(split.length == 1 && split[0].equals("null"))
+		{
+			return;
+		}
 		
 		for(String word : split)
 		{
@@ -264,12 +274,19 @@ public class Game
 	{
 		int max = GameType.values()[gameType].getWinningScore();
 		
+		if(getUserScore() == max && getOpponentScore() == max)
+		{
+			return null;
+		}
+		
 		return getUserScore() == max ? user : (getOpponentScore() == max ? opponent : null);
 	}
 	
 	public boolean hasWinner()
 	{
-		return getWinner() != null;
+		int max = GameType.values()[gameType].getWinningScore();
+		
+		return getUserScore() == max || getOpponentScore() == max;
 	}
 	
 	public String getRequester()

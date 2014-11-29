@@ -36,7 +36,7 @@ public class AccountParser
 		{
 			for(Character c : badChars)
 			{
-				if(s.trim().contains(c.toString()))
+				if(s.contains(c.toString()))
 				{
 					return false;
 				}
