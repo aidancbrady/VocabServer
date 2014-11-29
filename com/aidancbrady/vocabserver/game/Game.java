@@ -58,11 +58,9 @@ public class Game
 	
 	public Game(String userName, String opponentName, boolean userReq)
 	{
+		this(userName, opponentName);
+		
 		activeRequested = userReq;
-		
-		user = activeRequested ? userName : opponentName;
-		opponent = activeRequested ? opponentName : userName;
-		
 		isRequest = true;
 	}
 	
@@ -99,7 +97,7 @@ public class Game
 	
 	public Game convertToActive(String userPerspective)
 	{
-		if(!user.equals(userPerspective)) //If requesting user equals perspective user
+		if(!user.equals(userPerspective)) //If requesting user doesn't equal perspective user
 		{
 			String temp = opponent;
 			opponent = user;
