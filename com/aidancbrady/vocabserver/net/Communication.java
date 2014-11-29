@@ -518,8 +518,8 @@ public class Communication extends Thread
 								acct.requestGames.remove(g);
 								reqAcct.requestGames.remove(pair);
 								
-								acct.activeGames.add(g.convertToActive());
-								reqAcct.activeGames.add(pair.convertToActive());
+								acct.activeGames.add(g.convertToActive(acct.username));
+								reqAcct.activeGames.add(pair.convertToActive(reqAcct.username));
 								
 								writer.println("ACCEPT");
 							}

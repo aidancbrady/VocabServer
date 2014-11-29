@@ -97,9 +97,9 @@ public class Game
 		return g;
 	}
 	
-	public Game convertToActive()
+	public Game convertToActive(String userPerspective)
 	{
-		if(!activeRequested) //If the active account received the request and is represented by "opponent"
+		if(!user.equals(userPerspective)) //If requesting user equals perspective user
 		{
 			String temp = opponent;
 			opponent = user;
@@ -125,6 +125,11 @@ public class Game
 	{
 		String[] split = s.split(splitter.toString());
 		
+		if(split.length < 4)
+		{
+			return null;
+		}
+		
 		Game g = new Game(split[0], split[1].trim());
 		g.gameType = Integer.parseInt(split[2]);
 		g.userTurn = Boolean.parseBoolean(split[3]);
@@ -141,6 +146,11 @@ public class Game
 	public static Game readRequest(String s, Character splitter)
 	{
 		String[] split = s.split(splitter.toString());
+		
+		if(split.length < 4)
+		{
+			return null;
+		}
 		
 		Game g = new Game(split[1], split[2].trim(), Boolean.parseBoolean(split[0]));
 		g.gameType = Integer.parseInt(split[3]);
@@ -212,7 +222,7 @@ public class Game
 		List<Integer> list = new ArrayList<Integer>();
 		
 		int size = Integer.parseInt(array[start]);
-		int maxIndex = size;
+		int maxIndex = size+start;
 		
 		for(int i = 0; i < size; i++)
 		{
@@ -261,11 +271,12 @@ public class Game
 	
 	public String getRequestReceiver()
 	{
-		return activeRequested ? opponent : user;
+		return opponent;
 	}
 	
 	public String getOtherUser(String s)
 	{
+		System.out.println("");
 		return user.equals(s) ? opponent : user;
 	}
 	
