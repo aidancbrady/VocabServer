@@ -125,11 +125,6 @@ public class Game
 	{
 		String[] split = s.split(splitter.toString());
 		
-		if(split.length != 4)
-		{
-			return null;
-		}
-		
 		Game g = new Game(user, split[0].trim());
 		g.gameType = Integer.parseInt(split[1]);
 		g.userTurn = Boolean.parseBoolean(split[2]);
@@ -146,11 +141,6 @@ public class Game
 	public static Game readRequest(String user, String s, Character splitter)
 	{
 		String[] split = s.split(splitter.toString());
-		
-		if(split.length != 4)
-		{
-			return null;
-		}
 		
 		Game g = new Game(user, split[1].trim(), Boolean.parseBoolean(split[0]));
 		g.gameType = Integer.parseInt(split[2]);

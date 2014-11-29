@@ -334,8 +334,8 @@ public class Communication extends Thread
 						{
 							g.writeRequest(str1, ',');
 							str1.append(":");
-							str.append(VocabServer.instance().findAccount(g.getRequestOpponent()).email);
-							str.append(":");
+							str1.append(VocabServer.instance().findAccount(g.getRequestOpponent()).email);
+							str1.append(":");
 						}
 						
 						writer.println("CONT:" + str1);
@@ -417,7 +417,7 @@ public class Communication extends Thread
 								game.gameType = Integer.parseInt(msg[3]);
 								game.userPoints.add(Integer.parseInt(msg[4]));
 								game.listIdentifier = msg[5].trim();
-								game.readWordList(msg[5].trim());
+								game.readWordList(msg[6].trim());
 								game.userTurn = false;
 								
 								acct.requestGames.add(game);
@@ -550,7 +550,10 @@ public class Communication extends Thread
 							if(type == 0 /*Active*/)
 							{
 								acct.activeGames.remove(VocabServer.instance().findActiveGame(acct, delAcct));
+								acct.gamesLost++;
+								
 								delAcct.activeGames.remove(VocabServer.instance().findActiveGame(delAcct, acct));
+								delAcct.gamesWon++;
 								
 								writer.println("ACCEPT");
 							}
