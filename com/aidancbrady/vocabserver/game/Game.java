@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Game 
 {
-	public static final Game DEFAULT = new Game("Guest", "Guest");
+	public static final Game DEFAULT = new Game("Guest1", "Guest2");
 	
 	/** If this is an active or past game, this represents the active user. 
 	 * If this is a request, this represents the user that requested the game. 
@@ -68,7 +68,7 @@ public class Game
 	
 	public Game getNewRequestPair()
 	{
-		Game g = new Game(opponent, user, !activeRequested);
+		Game g = new Game(user, opponent, !activeRequested);
 		g.gameType = gameType;
 		g.listIdentifier = listIdentifier;
 		g.activeWords = activeWords;
@@ -121,16 +121,16 @@ public class Game
 		return this;
 	}
 	
-	public static Game readDefault(String user, String s, Character splitter)
+	public static Game readDefault(String s, Character splitter)
 	{
 		String[] split = s.split(splitter.toString());
 		
-		Game g = new Game(user, split[0].trim());
-		g.gameType = Integer.parseInt(split[1]);
-		g.userTurn = Boolean.parseBoolean(split[2]);
-		g.listIdentifier = split[3].trim();
+		Game g = new Game(split[0], split[1].trim());
+		g.gameType = Integer.parseInt(split[2]);
+		g.userTurn = Boolean.parseBoolean(split[3]);
+		g.listIdentifier = split[4].trim();
 		
-		int index = g.readScoreList(split, 4, true);
+		int index = g.readScoreList(split, 5, true);
 		index = g.readScoreList(split, index, false);
 		
 		g.readWordList(split[index]);
@@ -138,16 +138,16 @@ public class Game
 		return g;
 	}
 	
-	public static Game readRequest(String user, String s, Character splitter)
+	public static Game readRequest(String s, Character splitter)
 	{
 		String[] split = s.split(splitter.toString());
 		
-		Game g = new Game(user, split[1].trim(), Boolean.parseBoolean(split[0]));
-		g.gameType = Integer.parseInt(split[2]);
-		g.userTurn = Boolean.parseBoolean(split[3]);
-		g.listIdentifier = split[4].trim();
+		Game g = new Game(split[1], split[2].trim(), Boolean.parseBoolean(split[0]));
+		g.gameType = Integer.parseInt(split[3]);
+		g.userTurn = Boolean.parseBoolean(split[4]);
+		g.listIdentifier = split[5].trim();
 		
-		int index = g.readScoreList(split, 5, true);
+		int index = g.readScoreList(split, 6, true);
 		
 		g.readWordList(split[index]);
 		
@@ -156,6 +156,8 @@ public class Game
 	
 	public void writeDefault(StringBuilder str, Character splitter)
 	{
+		str.append(user);
+		str.append(splitter);
 		str.append(opponent);
 		str.append(splitter);
 		str.append(gameType);
@@ -176,7 +178,9 @@ public class Game
 	{
 		str.append(activeRequested);
 		str.append(splitter);
-		str.append(getRequestOpponent());
+		str.append(user);
+		str.append(splitter);
+		str.append(opponent);
 		str.append(splitter);
 		str.append(gameType);
 		str.append(splitter);
@@ -250,14 +254,19 @@ public class Game
 		return getWinner() != null;
 	}
 	
-	public String getRequesterName()
+	public String getRequester()
 	{
-		return activeRequested ? user : opponent;
+		return user;
 	}
 	
-	public String getRequestOpponent()
+	public String getRequestReceiver()
 	{
 		return activeRequested ? opponent : user;
+	}
+	
+	public String getOtherUser(String s)
+	{
+		return user.equals(s) ? opponent : user;
 	}
 	
 	public void setGameType(GameType type)

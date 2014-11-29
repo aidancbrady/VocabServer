@@ -334,7 +334,7 @@ public class Communication extends Thread
 						{
 							g.writeRequest(str1, ',');
 							str1.append(":");
-							str1.append(VocabServer.instance().findAccount(g.getRequestOpponent()).email);
+							str1.append(VocabServer.instance().findAccount(g.getOtherUser(acct.username)).email);
 							str1.append(":");
 						}
 						
@@ -356,7 +356,7 @@ public class Communication extends Thread
 						{
 							g.writeDefault(str, ',');
 							str.append(":");
-							str.append(VocabServer.instance().findAccount(g.getRequestOpponent()).email);
+							str.append(VocabServer.instance().findAccount(g.getOtherUser(acct.username)).email);
 							str.append(":");
 						}
 						

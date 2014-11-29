@@ -81,7 +81,7 @@ public final class AccountHandler
 					
 					for(String active : split)
 					{
-						Game g = Game.readDefault(split[0], active, ':');
+						Game g = Game.readDefault(active, ':');
 						
 						if(g != null)
 						{
@@ -93,7 +93,7 @@ public final class AccountHandler
 					
 					for(String request : split)
 					{
-						Game g = Game.readRequest(split[0], request, ':');
+						Game g = Game.readRequest(request, ':');
 						
 						if(g != null)
 						{
@@ -105,7 +105,7 @@ public final class AccountHandler
 					
 					for(String past : split)
 					{
-						Game g = Game.readDefault(split[0], past, ':');
+						Game g = Game.readDefault(past, ':');
 						
 						if(g != null)
 						{
@@ -264,7 +264,7 @@ public final class AccountHandler
 		{
 			Game g = iter.next();
 			
-			if(VocabServer.instance().findAccount(g.getRequestOpponent()) == null)
+			if(VocabServer.instance().findAccount(g.getRequestReceiver()) == null)
 			{
 				iter.remove();
 			}
