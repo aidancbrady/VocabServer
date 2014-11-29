@@ -114,8 +114,6 @@ public class Game
 	
 	public Game convertToPast()
 	{
-		userPoints.clear();
-		opponentPoints.clear();
 		activeWords.clear();
 		
 		return this;

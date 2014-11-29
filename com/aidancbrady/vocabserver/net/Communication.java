@@ -572,7 +572,6 @@ public class Communication extends Thread
 							else if(type == 1 /*Past*/)
 							{
 								int removeIndex = Integer.parseInt(msg[4].trim());
-								
 								Game remove = acct.pastGames.get(removeIndex);
 								
 								acct.pastGames.remove(remove);
