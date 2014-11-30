@@ -48,6 +48,7 @@ public class Communication extends Thread
 					
 					if((acct = VocabServer.instance().findAccount(msg[1], msg[2])) != null)
 					{
+						acct.login();
 						writer.println("ACCEPT:" + acct.email + ":" + acct.gamesWon + ":" + acct.gamesLost);
 					}
 					else {
@@ -300,7 +301,7 @@ public class Communication extends Thread
 						
 						if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
 						{
-							writer.println("ACCEPT:" + reqAcct.email + ":" + reqAcct.gamesWon + ":" + reqAcct.gamesLost);
+							writer.println("ACCEPT:" + reqAcct.email + ":" + reqAcct.gamesWon + ":" + reqAcct.gamesLost + ":" + reqAcct.lastLogin);
 						}
 						else {
 							writer.println("REJECT:Account doesn't exist");

@@ -1,21 +1,28 @@
 package com.aidancbrady.vocabserver;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import com.aidancbrady.vocabserver.game.Game;
 
 public class Account 
 {
+	public static final Account DEFAULT = new Account("Guest", "guest@test.com", "password");
+	
 	public String username;
 	
 	public String email;
 	
 	public String password;
 	
+	public boolean isRequest;
+	
 	public int gamesWon;
 	
 	public int gamesLost;
+	
+	public long lastLogin;
 	
 	public List<String> friends = new ArrayList<String>();
 	public List<String> requests = new ArrayList<String>();
@@ -24,6 +31,12 @@ public class Account
 	public List<Game> activeGames = new ArrayList<Game>();
 	public List<Game> requestGames = new ArrayList<Game>();
 	public List<Game> pastGames = new ArrayList<Game>();
+	
+	public Account(String user, boolean request)
+	{
+		username = user;
+		isRequest = request;
+	}
 	
 	public Account(String user, String em, String pass)
 	{
@@ -114,6 +127,18 @@ public class Account
 	public Account setPastGames(List<Game> games)
 	{
 		pastGames = games;
+		
+		return this;
+	}
+	
+	public void login()
+	{
+		lastLogin = Calendar.getInstance().getTimeInMillis();
+	}
+	
+	public Account setLastLogin(long millis)
+	{
+		lastLogin = millis;
 		
 		return this;
 	}
