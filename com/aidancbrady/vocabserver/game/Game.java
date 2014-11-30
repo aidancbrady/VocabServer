@@ -1,7 +1,6 @@
 package com.aidancbrady.vocabserver.game;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class Game 
@@ -263,13 +262,15 @@ public class Game
 	}
 	
 	public void readWordList(String s)
-	{
+	{		
 		String[] split = s.split("&");
 		
 		if(split.length == 1 && split[0].equals("null"))
 		{
 			return;
 		}
+		
+		activeWords.clear();
 		
 		for(String word : split)
 		{

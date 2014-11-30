@@ -42,6 +42,7 @@ public final class AccountHandler
 				{
 					int won = Integer.parseInt(split[3]);
 					int lost = Integer.parseInt(split[4]);
+					long lastLogin = Long.parseLong(split[5]);
 					
 					List<String> friends = new ArrayList<String>();
 					List<String> requests = new ArrayList<String>();
@@ -116,7 +117,7 @@ public final class AccountHandler
 					split = orig;
 					
 					VocabServer.instance().accounts.add(new Account(split[0], split[1], split[2])
-					.setGamesWon(won).setGamesLost(lost)
+					.setGamesWon(won).setGamesLost(lost).setLastLogin(lastLogin)
 					.setFriends(friends).setRequests(requests).setRequested(requested)
 					.setGameData(activeGames, requestGames, pastGames));
 				}
@@ -195,7 +196,7 @@ public final class AccountHandler
 					pastGames.append(",");
 				}
 				
-				writer.append(acct.username + "," + acct.email + "," + acct.password + "," + acct.gamesWon + "," + acct.gamesLost + "," + friends + "," + requests + "," + requested);
+				writer.append(acct.username + "," + acct.email + "," + acct.password + "," + acct.gamesWon + "," + acct.gamesLost + "," + acct.lastLogin + "," + friends + "," + requests + "," + requested);
 				writer.newLine();
 				
 				writer.append(activeGames);
