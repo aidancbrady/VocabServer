@@ -32,11 +32,10 @@ public class VocabServer
 		
 		try {
 			serverSocket = new ServerSocket(SERVER_PORT);
+			serverRunning = true;
 			
 			new ServerTimer().start();
 			new ConnectionHandler().start();
-			
-			serverRunning = true;
 			
 			System.out.println("Initiated server");
 			
@@ -177,6 +176,8 @@ public class VocabServer
 			System.out.println("Unable to start server");
 			e.printStackTrace();
 		}
+		
+		serverRunning = false;
 	}
 	
 	public void quit()
