@@ -166,7 +166,12 @@ public class Communication extends Thread
 					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
-						String query = msg[2].trim();
+						String query = null;
+						
+						if(msg.length == 3)
+						{
+							query = msg[2].trim();
+						}
 						
 						List<String> accts = new ArrayList<String>();
 						
@@ -174,7 +179,7 @@ public class Communication extends Thread
 						
 						for(Account iterAcct : VocabServer.instance().accounts)
 						{
-							if(iterAcct.username.toLowerCase().contains(query.toLowerCase()))
+							if(query == null || iterAcct.username.toLowerCase().contains(query.toLowerCase()))
 							{
 								if(!iterAcct.username.equals(acct.username))
 								{
@@ -293,9 +298,7 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("GETINFO"))
 				{
-					Account acct = null;
-					
-					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					if(VocabServer.instance().findAccount(msg[1].trim()) != null)
 					{
 						Account reqAcct = null;
 						
