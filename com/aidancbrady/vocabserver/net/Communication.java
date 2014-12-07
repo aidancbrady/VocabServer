@@ -96,9 +96,13 @@ public class Communication extends Thread
 						
 						for(String s : acct.friends)
 						{
+							Account iterAcct = VocabServer.instance().findAccount(s);
+							
 							str.append(s);
 							str.append(",");
-							str.append(VocabServer.instance().findAccount(s).email);
+							str.append(iterAcct.email);
+							str.append(",");
+							str.append(iterAcct.lastLogin);
 							str.append(":");
 						}
 						
