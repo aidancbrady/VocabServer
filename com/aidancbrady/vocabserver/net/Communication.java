@@ -185,7 +185,7 @@ public class Communication extends Thread
 						{
 							if(query == null || iterAcct.username.toLowerCase().contains(query.toLowerCase()))
 							{
-								if(!iterAcct.username.equals(acct.username))
+								if(!iterAcct.username.equals(acct.username) && !acct.friends.contains(iterAcct) && !acct.requests.contains(iterAcct) && !acct.requested.contains(iterAcct))
 								{
 									accts.add(iterAcct.username);
 									i++;
