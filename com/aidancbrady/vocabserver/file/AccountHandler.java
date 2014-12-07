@@ -54,28 +54,34 @@ public final class AccountHandler
 					
 					String[] orig = split;
 					
-					if(split.length > 5)
+					for(String s : split[6].split(":"))
 					{
-						for(String s : split[5].split(":"))
+						if(s.equals("|NULL|"))
 						{
-							friends.add(s.trim());
+							break;
 						}
+						
+						friends.add(s.trim());
 					}
 					
-					if(split.length > 6)
+					for(String s : split[7].split(":"))
 					{
-						for(String s : split[6].split(":"))
+						if(s.equals("|NULL|"))
 						{
-							requests.add(s.trim());
+							break;
 						}
+						
+						requests.add(s.trim());
 					}
 					
-					if(split.length > 7)
+					for(String s : split[8].split(":"))
 					{
-						for(String s : split[7].split(":"))
+						if(s.equals("|NULL|"))
 						{
-							requested.add(s.trim());
+							break;
 						}
+						
+						requested.add(s.trim());
 					}
 					
 					split = reader.readLine().split(",");
@@ -150,26 +156,44 @@ public final class AccountHandler
 			{
 				StringBuilder friends = new StringBuilder();
 				
-				for(String s : acct.friends)
+				if(!acct.friends.isEmpty())
 				{
-					friends.append(s);
-					friends.append(":");
+					for(String s : acct.friends)
+					{
+						friends.append(s);
+						friends.append(":");
+					}
+				}
+				else {
+					friends.append("|NULL|");
 				}
 				
 				StringBuilder requests = new StringBuilder();
 				
-				for(String s : acct.requests)
+				if(!acct.requests.isEmpty())
 				{
-					requests.append(s);
-					requests.append(":");
+					for(String s : acct.requests)
+					{
+						requests.append(s);
+						requests.append(":");
+					}
+				}
+				else {
+					requests.append("|NULL|");
 				}
 				
 				StringBuilder requested = new StringBuilder();
 				
-				for(String s : acct.requested)
+				if(!acct.requested.isEmpty())
 				{
-					requested.append(s);
-					requested.append(":");
+					for(String s : acct.requested)
+					{
+						requested.append(s);
+						requested.append(":");
+					}
+				}
+				else {
+					requested.append("|NULL|");
 				}
 				
 				StringBuilder activeGames = new StringBuilder();
@@ -255,7 +279,7 @@ public final class AccountHandler
 		{
 			Game g = iter.next();
 			
-			if(VocabServer.instance().findAccount(g.opponent) == null)
+			if(VocabServer.instance().findAccount(g.opponent) == null || !acct.friends.contains(g.opponent))
 			{
 				iter.remove();
 			}
@@ -265,7 +289,7 @@ public final class AccountHandler
 		{
 			Game g = iter.next();
 			
-			if(VocabServer.instance().findAccount(g.getRequestReceiver()) == null)
+			if(VocabServer.instance().findAccount(g.getOtherUser(acct.username)) == null || !acct.friends.contains(g.getOtherUser(acct.username)))
 			{
 				iter.remove();
 			}
@@ -275,7 +299,7 @@ public final class AccountHandler
 		{
 			Game g = iter.next();
 			
-			if(VocabServer.instance().findAccount(g.opponent) == null)
+			if(VocabServer.instance().findAccount(g.opponent) == null || !acct.friends.contains(g.opponent))
 			{
 				iter.remove();
 			}

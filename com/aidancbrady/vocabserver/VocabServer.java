@@ -89,7 +89,7 @@ public class VocabServer
 					AccountHandler.load();
 					System.out.println("Successfully loaded account data");
 				}
-				else if(s.equals("validify"))
+				else if(s.equals("validate") || s.equals("validify"))
 				{
 					AccountHandler.assertValidity();
 					System.out.println("Successfully asserted validity of user list");
