@@ -2,7 +2,9 @@ package com.aidancbrady.vocabserver;
 
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import com.aidancbrady.vocabserver.file.AccountHandler;
@@ -14,6 +16,7 @@ public class VocabServer
 	private static VocabServer instance = new VocabServer();
 	
 	public List<Account> accounts = new ArrayList<Account>();
+	public Map<String, String> searching = new HashMap<String, String>();
 	
 	public boolean serverRunning;
 	

@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.aidancbrady.vocabserver.Account;
 import com.aidancbrady.vocabserver.AccountParser;
@@ -30,6 +31,8 @@ public class Communication extends Thread
 	@Override
 	public void run()
 	{
+		Account acct = null;
+		
 		try {
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			writer = new PrintWriter(socket.getOutputStream(), true);
@@ -43,8 +46,6 @@ public class Communication extends Thread
 				if(msg[0].equals("LOGIN"))
 				{
 					System.out.println(socket.getInetAddress() + " attempted to log in with creds " + msg[1] + ", " + msg[2]);
-					
-					Account acct = null;
 					
 					if((acct = VocabServer.instance().findAccount(msg[1], msg[2])) != null)
 					{
@@ -88,8 +89,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LFRIENDS"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						StringBuilder str = new StringBuilder();
@@ -124,8 +123,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("DELFRIEND"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account delAcct = null;
@@ -166,8 +163,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LUSERS"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						String query = null;
@@ -214,8 +209,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LREQUESTS"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						StringBuilder str = new StringBuilder();
@@ -236,8 +229,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("FRIENDREQ"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account reqAcct = null;
@@ -275,8 +266,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("REQCONF"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account reqAcct = null;
@@ -320,8 +309,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LGAMES"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						StringBuilder str = new StringBuilder();
@@ -354,8 +341,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LPAST"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						StringBuilder str = new StringBuilder();
@@ -376,8 +361,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("CONFGAME"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account reqAcct = null;
@@ -409,8 +392,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("NEWGAME"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account reqAcct = null;
@@ -452,8 +433,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("COMPGAME"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account reqAcct = null;
@@ -524,8 +503,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("GAMEREQCONF"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account reqAcct = null;
@@ -559,8 +536,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("DELGAME"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account delAcct = null;
@@ -614,8 +589,6 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("CHANGEPASS"))
 				{
-					Account acct = null;
-					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						String current = msg[2].trim();
@@ -650,14 +623,66 @@ public class Communication extends Thread
 						writer.println("REJECT:Unable to authenticate");
 					}
 				}
+				else if(msg[0].equals("JOINGAME"))
+				{
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						boolean found = false;
+						
+						if(VocabServer.instance().searching.size() > 0)
+						{
+							for(Map.Entry<String, String> entry : VocabServer.instance().searching.entrySet())
+							{
+								if(entry.getValue() != Account.DEFAULT.username)
+								{
+									VocabServer.instance().searching.put(entry.getKey(), acct.username);
+									writer.println("ACCEPT:" + entry.getKey());
+									found = true;
+									break;
+								}
+							}
+						}
+						
+						if(!found)
+						{
+							VocabServer.instance().searching.put(acct.username, Account.DEFAULT.username);
+							int count = 60;
+							
+							while(count > 0)
+							{
+								String user = VocabServer.instance().searching.get(acct.username);
+								
+								if(user != null && user != Account.DEFAULT.username)
+								{
+									writer.println("ACCEPT:" + VocabServer.instance().searching.get(acct.username));
+									found = true;
+									break;
+								}
+								
+								count--;
+								Thread.sleep(1000);
+							}
+							
+							if(!found)
+							{
+								writer.println("REJECT:Timeout");
+							}
+						}
+					}
+				}
 			}
 			
 			writer.flush();
 			
 			System.out.println("Closing connection with " + socket.getInetAddress());
 			close();
-		} catch(Exception e) {
-			e.printStackTrace();
+		} catch(Throwable t) {
+			t.printStackTrace();
+		}
+		
+		if(acct != null)
+		{
+			VocabServer.instance().searching.remove(acct.username);
 		}
 	}
 	

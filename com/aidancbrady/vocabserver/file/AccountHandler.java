@@ -279,7 +279,7 @@ public final class AccountHandler
 		{
 			Game g = iter.next();
 			
-			if(VocabServer.instance().findAccount(g.opponent) == null || !acct.friends.contains(g.opponent))
+			if(VocabServer.instance().findAccount(g.opponent) == null)
 			{
 				iter.remove();
 			}
@@ -289,7 +289,7 @@ public final class AccountHandler
 		{
 			Game g = iter.next();
 			
-			if(VocabServer.instance().findAccount(g.getOtherUser(acct.username)) == null || !acct.friends.contains(g.getOtherUser(acct.username)))
+			if(VocabServer.instance().findAccount(g.getOtherUser(acct.username)) == null)
 			{
 				iter.remove();
 			}
@@ -299,7 +299,7 @@ public final class AccountHandler
 		{
 			Game g = iter.next();
 			
-			if(VocabServer.instance().findAccount(g.opponent) == null || !acct.friends.contains(g.opponent))
+			if(VocabServer.instance().findAccount(g.opponent) == null)
 			{
 				iter.remove();
 			}
