@@ -22,7 +22,7 @@ public class VocabServer
 	public static final String SPLITTER_1 = "}";
 	public static final String SPLITTER_2 = "]";
 	
-	public static final File LISTS_DIR = new File(File.separator + "var" + File.separator + "www" + File.separator + "Lists");
+	public static final File LISTS_DIR = new File(File.separator + "var" + File.separator + "www" + File.separator + "html" + File.separator + "Lists");
 	
 	public boolean serverRunning;
 	
@@ -58,6 +58,15 @@ public class VocabServer
 				{
 					System.out.println("Shutting down");
 					quit();
+				}
+				else if(s.equals("lists_file"))
+				{
+					try {
+						System.out.println(LISTS_DIR.exists());
+						System.out.println(LISTS_DIR.getAbsolutePath());
+					} catch(Throwable t) {
+						t.printStackTrace();
+					}
 				}
 				else if(s.equals("accounts"))
 				{
