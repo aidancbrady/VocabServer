@@ -7,9 +7,10 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -773,7 +774,12 @@ public class Communication extends Thread
 	{
 		try {
 			File userDir = new File(VocabServer.LISTS_DIR, acct.username);
-			userDir.mkdirs();
+			
+			try {
+				Files.createDirectories(userDir.toPath());
+			} catch(Throwable t) {
+				t.printStackTrace();
+			}
 			
 			File listFile = new File(userDir, listID + ".txt");
 			
@@ -817,7 +823,7 @@ public class Communication extends Thread
 		{
 			str.append(strings[i]);
 			
-			if(i < strings.length-2)
+			if(i < strings.length-1)
 			{
 				str.append(VocabServer.SPLITTER_1);
 			}

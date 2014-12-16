@@ -20,7 +20,7 @@ public class VocabServer
 	public Map<String, String> searching = new HashMap<String, String>();
 	
 	public static final String SPLITTER_1 = "}";
-	public static final String SPLITTER_2 = "^";
+	public static final String SPLITTER_2 = "]";
 	
 	public static final File LISTS_DIR = new File(File.separator + "var" + File.separator + "www" + File.separator + "Lists");
 	
