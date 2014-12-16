@@ -2,7 +2,9 @@ package com.aidancbrady.vocabserver;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.aidancbrady.vocabserver.game.Game;
 
@@ -24,6 +26,8 @@ public class Account
 	
 	public long lastLogin;
 	
+	public boolean premium;
+	
 	public List<String> friends = new ArrayList<String>();
 	public List<String> requests = new ArrayList<String>();
 	public List<String> requested = new ArrayList<String>();
@@ -31,6 +35,8 @@ public class Account
 	public List<Game> activeGames = new ArrayList<Game>();
 	public List<Game> requestGames = new ArrayList<Game>();
 	public List<Game> pastGames = new ArrayList<Game>();
+	
+	public Map<String, String> ownedLists = new HashMap<String, String>();
 	
 	public Account(String user, boolean request)
 	{
@@ -139,6 +145,20 @@ public class Account
 	public Account setLastLogin(long millis)
 	{
 		lastLogin = millis;
+		
+		return this;
+	}
+	
+	public Account setPremium(boolean b)
+	{
+		premium = b;
+		
+		return this;
+	}
+	
+	public Account setOwnedLists(Map<String, String> lists)
+	{
+		ownedLists = lists;
 		
 		return this;
 	}

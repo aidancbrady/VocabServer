@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.aidancbrady.vocabserver.Account;
 import com.aidancbrady.vocabserver.VocabServer;
@@ -36,13 +38,14 @@ public final class AccountHandler
 			
 			while((readingLine = reader.readLine()) != null)
 			{
-				String[] split = readingLine.split(",");
+				String[] split = readingLine.split(VocabServer.SPLITTER_1);
 				
 				if(split.length >= 5)
 				{
 					int won = Integer.parseInt(split[3]);
 					int lost = Integer.parseInt(split[4]);
 					long lastLogin = Long.parseLong(split[5]);
+					boolean premium = Boolean.parseBoolean(split[6]);
 					
 					List<String> friends = new ArrayList<String>();
 					List<String> requests = new ArrayList<String>();
@@ -52,9 +55,11 @@ public final class AccountHandler
 					List<Game> requestGames = new ArrayList<Game>();
 					List<Game> pastGames = new ArrayList<Game>();
 					
+					Map<String, String> ownedLists = new HashMap<String, String>();
+					
 					String[] orig = split;
 					
-					for(String s : split[6].split(":"))
+					for(String s : split[7].split(VocabServer.SPLITTER_2))
 					{
 						if(s.equals("|NULL|"))
 						{
@@ -64,7 +69,7 @@ public final class AccountHandler
 						friends.add(s.trim());
 					}
 					
-					for(String s : split[7].split(":"))
+					for(String s : split[8].split(VocabServer.SPLITTER_2))
 					{
 						if(s.equals("|NULL|"))
 						{
@@ -74,7 +79,7 @@ public final class AccountHandler
 						requests.add(s.trim());
 					}
 					
-					for(String s : split[8].split(":"))
+					for(String s : split[9].split(VocabServer.SPLITTER_2))
 					{
 						if(s.equals("|NULL|"))
 						{
@@ -84,11 +89,11 @@ public final class AccountHandler
 						requested.add(s.trim());
 					}
 					
-					split = reader.readLine().split(",");
+					split = reader.readLine().split(VocabServer.SPLITTER_1);
 					
 					for(String active : split)
 					{
-						Game g = Game.readDefault(active, ':');
+						Game g = Game.readDefault(active, VocabServer.SPLITTER_2);
 						
 						if(g != null)
 						{
@@ -96,11 +101,11 @@ public final class AccountHandler
 						}
 					}
 					
-					split = reader.readLine().split(",");
+					split = reader.readLine().split(VocabServer.SPLITTER_1);
 					
 					for(String request : split)
 					{
-						Game g = Game.readRequest(request, ':');
+						Game g = Game.readRequest(request, VocabServer.SPLITTER_2);
 						
 						if(g != null)
 						{
@@ -108,11 +113,11 @@ public final class AccountHandler
 						}
 					}
 					
-					split = reader.readLine().split(",");
+					split = reader.readLine().split(VocabServer.SPLITTER_1);
 					
 					for(String past : split)
 					{
-						Game g = Game.readDefault(past, ':');
+						Game g = Game.readDefault(past, VocabServer.SPLITTER_2);
 						
 						if(g != null)
 						{
@@ -120,12 +125,24 @@ public final class AccountHandler
 						}
 					}
 					
+					split = reader.readLine().split(VocabServer.SPLITTER_1);
+					
+					for(String entry : split)
+					{
+						String[] entrySplit = entry.split(VocabServer.SPLITTER_2);
+						
+						if(entrySplit.length == 2)
+						{
+							ownedLists.put(entrySplit[0], entrySplit[1]);
+						}
+					}
+					
 					split = orig;
 					
 					VocabServer.instance().accounts.add(new Account(split[0], split[1], split[2])
-					.setGamesWon(won).setGamesLost(lost).setLastLogin(lastLogin)
+					.setGamesWon(won).setGamesLost(lost).setLastLogin(lastLogin).setPremium(premium)
 					.setFriends(friends).setRequests(requests).setRequested(requested)
-					.setGameData(activeGames, requestGames, pastGames));
+					.setGameData(activeGames, requestGames, pastGames).setOwnedLists(ownedLists));
 				}
 			}
 			
@@ -161,7 +178,7 @@ public final class AccountHandler
 					for(String s : acct.friends)
 					{
 						friends.append(s);
-						friends.append(":");
+						friends.append(VocabServer.SPLITTER_2);
 					}
 				}
 				else {
@@ -175,7 +192,7 @@ public final class AccountHandler
 					for(String s : acct.requests)
 					{
 						requests.append(s);
-						requests.append(":");
+						requests.append(VocabServer.SPLITTER_2);
 					}
 				}
 				else {
@@ -189,7 +206,7 @@ public final class AccountHandler
 					for(String s : acct.requested)
 					{
 						requested.append(s);
-						requested.append(":");
+						requested.append(VocabServer.SPLITTER_2);
 					}
 				}
 				else {
@@ -200,27 +217,38 @@ public final class AccountHandler
 				
 				for(Game g : acct.activeGames)
 				{
-					g.writeDefault(activeGames, ':');
-					activeGames.append(",");
+					g.writeDefault(activeGames, VocabServer.SPLITTER_2);
+					activeGames.append(VocabServer.SPLITTER_1);
 				}
 				
 				StringBuilder requestGames = new StringBuilder();
 				
 				for(Game g : acct.requestGames)
 				{
-					g.writeRequest(requestGames, ':');
-					activeGames.append(",");
+					g.writeRequest(requestGames, VocabServer.SPLITTER_2);
+					activeGames.append(VocabServer.SPLITTER_1);
 				}
 				
 				StringBuilder pastGames = new StringBuilder();
 				
 				for(Game g : acct.pastGames)
 				{
-					g.writeDefault(pastGames, ':');
-					pastGames.append(",");
+					g.writeDefault(pastGames, VocabServer.SPLITTER_2);
+					pastGames.append(VocabServer.SPLITTER_1);
 				}
 				
-				writer.append(acct.username + "," + acct.email + "," + acct.password + "," + acct.gamesWon + "," + acct.gamesLost + "," + acct.lastLogin + "," + friends + "," + requests + "," + requested);
+				StringBuilder ownedLists = new StringBuilder();
+				
+				for(Map.Entry<String, String> entry : acct.ownedLists.entrySet())
+				{
+					ownedLists.append(entry.getKey() + VocabServer.SPLITTER_2 + entry.getValue());
+					ownedLists.append(VocabServer.SPLITTER_1);
+				}
+				
+				writer.append(acct.username + VocabServer.SPLITTER_1 + acct.email + VocabServer.SPLITTER_1 + acct.password + 
+						VocabServer.SPLITTER_1 + acct.gamesWon + VocabServer.SPLITTER_1 + acct.gamesLost + 
+						VocabServer.SPLITTER_1 + acct.lastLogin + VocabServer.SPLITTER_1 + acct.premium + 
+						VocabServer.SPLITTER_1 + friends + VocabServer.SPLITTER_1 + requests + VocabServer.SPLITTER_1 + requested);
 				writer.newLine();
 				
 				writer.append(activeGames);
@@ -230,6 +258,9 @@ public final class AccountHandler
 				writer.newLine();
 				
 				writer.append(pastGames);
+				writer.newLine();
+				
+				writer.append(ownedLists);
 				writer.newLine();
 			}
 			

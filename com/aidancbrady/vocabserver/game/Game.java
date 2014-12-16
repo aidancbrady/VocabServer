@@ -121,9 +121,9 @@ public class Game
 		return this;
 	}
 	
-	public static Game readDefault(String s, Character splitter)
+	public static Game readDefault(String s, String splitter)
 	{
-		String[] split = s.split(splitter.toString());
+		String[] split = s.split(splitter);
 		
 		if(split.length < 4)
 		{
@@ -144,9 +144,9 @@ public class Game
 		return g;
 	}
 	
-	public static Game readRequest(String s, Character splitter)
+	public static Game readRequest(String s, String splitter)
 	{
-		String[] split = s.split(splitter.toString());
+		String[] split = s.split(splitter);
 		
 		if(split.length < 4)
 		{
@@ -166,7 +166,7 @@ public class Game
 		return g;
 	}
 	
-	public void writeDefault(StringBuilder str, Character splitter)
+	public void writeDefault(StringBuilder str, String splitter)
 	{
 		str.append(user);
 		str.append(splitter);
@@ -188,7 +188,7 @@ public class Game
 		str.append(splitter);
 	}
 	
-	public void writeRequest(StringBuilder str, Character splitter)
+	public void writeRequest(StringBuilder str, String splitter)
 	{
 		str.append(activeRequested);
 		str.append(splitter);
@@ -211,15 +211,15 @@ public class Game
 		str.append(splitter);
 	}
 	
-	public void writeScoreList(List<Integer> score, StringBuilder str, Character split)
+	public void writeScoreList(List<Integer> score, StringBuilder str, String splitter)
 	{
 		str.append(score.size());
-		str.append(split);
+		str.append(splitter);
 		
 		for(int i : score)
 		{
 			str.append(i);
-			str.append(split);
+			str.append(splitter);
 		}
 	}
 	

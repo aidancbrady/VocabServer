@@ -1,10 +1,15 @@
 package com.aidancbrady.vocabserver.net;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +46,7 @@ public class Communication extends Thread
 			
 			while((reading = reader.readLine()) != null && !disconnected)
 			{
-				String[] msg = reading.trim().split(":");
+				String[] msg = reading.trim().split(VocabServer.SPLITTER_1);
 				
 				if(msg[0].equals("LOGIN"))
 				{
@@ -50,10 +55,10 @@ public class Communication extends Thread
 					if((acct = VocabServer.instance().findAccount(msg[1], msg[2])) != null)
 					{
 						acct.login();
-						writer.println("ACCEPT:" + acct.email + ":" + acct.gamesWon + ":" + acct.gamesLost);
+						writer.println(compileMsg("ACCEPT", acct.email, acct.gamesWon, acct.gamesLost));
 					}
 					else {
-						writer.println("REJECT:Bad credentials");
+						writer.println(compileMsg("REJECT", "Bad credentials"));
 					}
 				}
 				else if(msg[0].equals("REGISTER"))
@@ -62,23 +67,23 @@ public class Communication extends Thread
 					
 					if(VocabServer.instance().findAccount(msg[1]) != null)
 					{
-						writer.println("REJECT:Username already in use");
+						writer.println(compileMsg("REJECT", "Username already in use"));
 					}
 					else if(msg[1].trim().length() > 16)
 					{
-						writer.println("REJECT:Username must be at or below 16 characters");
+						writer.println(compileMsg("REJECT", "Username must be at or below 16 characters"));
 					}
 					else if(msg[3].trim().length() > 16)
 					{
-						writer.println("REJECT:Password must be at or below 16 characters");
+						writer.println(compileMsg("REJECT", "Password must be at or below 16 characters"));
 					}
 					else if(msg[3].trim().length() < 6)
 					{
-						writer.println("REJECT:Password must be at least 6 characters");
+						writer.println(compileMsg("REJECT", "Password must be at least 6 characters"));
 					}
 					else if(!AccountParser.isValidCredential(msg[1], false) || !AccountParser.isValidCredential(msg[2], true) || !AccountParser.isValidCredential(msg[3], false))
 					{
-						writer.println("REJECT:Special characters are not allowed");
+						writer.println(compileMsg("REJECT", "Special characters are not allowed"));
 					}
 					else {
 						writer.println("ACCEPT");
@@ -98,27 +103,27 @@ public class Communication extends Thread
 							Account iterAcct = VocabServer.instance().findAccount(s);
 							
 							str.append(s);
-							str.append(",");
+							str.append(VocabServer.SPLITTER_2);
 							str.append(iterAcct.email);
-							str.append(",");
+							str.append(VocabServer.SPLITTER_2);
 							str.append(iterAcct.lastLogin);
-							str.append(":");
+							str.append(VocabServer.SPLITTER_1);
 						}
 						
-						writer.println("ACCEPT:" + str);
+						writer.println(compileMsg("ACCEPT", str));
 						
 						StringBuilder str1 = new StringBuilder();
 						
 						for(String s : acct.requested)
 						{
 							str1.append(s);
-							str1.append(":");
+							str1.append(VocabServer.SPLITTER_1);
 						}
 						
-						writer.println("CONT:" + str1);
+						writer.println(compileMsg("CONT", str1));
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("DELFRIEND"))
@@ -154,11 +159,11 @@ public class Communication extends Thread
 							}
 						}
 						else {
-							writer.println("REJECT:Account doesn't exist");
+							writer.println(compileMsg("REJECT", "Account doesn't exist"));
 						}
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("LUSERS"))
@@ -198,13 +203,13 @@ public class Communication extends Thread
 						for(String s : accts)
 						{
 							str.append(s);
-							str.append(",");
+							str.append(VocabServer.SPLITTER_2);
 						}
 						
-						writer.println("ACCEPT:" + str);
+						writer.println(compileMsg("ACCEPT", str));
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("LREQUESTS"))
@@ -216,15 +221,15 @@ public class Communication extends Thread
 						for(String s : acct.requests)
 						{
 							str.append(s);
-							str.append(",");
+							str.append(VocabServer.SPLITTER_2);
 							str.append(VocabServer.instance().findAccount(s).email);
-							str.append(":");
+							str.append(VocabServer.SPLITTER_1);
 						}
 						
-						writer.println("ACCEPT:" + str);
+						writer.println(compileMsg("ACCEPT", str));
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("FRIENDREQ"))
@@ -237,7 +242,7 @@ public class Communication extends Thread
 						{
 							if(acct.friends.contains(reqAcct.username))
 							{
-								writer.println("REJECT:User is already in your friends list");
+								writer.println(compileMsg("REJECT", "User is already in your friends list"));
 								System.out.println(msg[1].trim() + " tried to send a FRIENDREQ request to " + msg[2].trim() + ", who was already friends");
 							}
 							else {
@@ -255,12 +260,12 @@ public class Communication extends Thread
 							}
 						}
 						else {
-							writer.println("REJECT:Account doesn't exist");
+							writer.println(compileMsg("REJECT", "Account doesn't exist"));
 							System.out.println(msg[1].trim() + " tried to send a FRIENDREQ request to " + msg[2].trim() + ", which doesn't exist");
 						}
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 						System.out.println("Unable to authenticate " + msg[1].trim() + " in FRIENDREQ request");
 					}
 				}
@@ -282,11 +287,11 @@ public class Communication extends Thread
 							writer.println("ACCEPT");
 						}
 						else {
-							writer.println("REJECT:Account doesn't exist");
+							writer.println(compileMsg("REJECT", "Account doesn't exist"));
 						}
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("GETINFO"))
@@ -297,14 +302,14 @@ public class Communication extends Thread
 						
 						if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
 						{
-							writer.println("ACCEPT:" + reqAcct.email + ":" + reqAcct.gamesWon + ":" + reqAcct.gamesLost + ":" + reqAcct.lastLogin);
+							writer.println(compileMsg("ACCEPT", reqAcct.email, reqAcct.gamesWon, reqAcct.gamesLost, reqAcct.lastLogin));
 						}
 						else {
-							writer.println("REJECT:Account doesn't exist");
+							writer.println(compileMsg("REJECT", "Account doesn't exist"));
 						}
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("LGAMES"))
@@ -315,28 +320,28 @@ public class Communication extends Thread
 						
 						for(Game g : acct.activeGames)
 						{
-							g.writeDefault(str, ',');
-							str.append(":");
+							g.writeDefault(str, VocabServer.SPLITTER_2);
+							str.append(VocabServer.SPLITTER_1);
 							str.append(VocabServer.instance().findAccount(g.opponent).email);
-							str.append(":");
+							str.append(VocabServer.SPLITTER_1);
 						}
 						
-						writer.println("ACCEPT:" + str);
+						writer.println(compileMsg("ACCEPT", str));
 						
 						StringBuilder str1 = new StringBuilder();
 						
 						for(Game g : acct.requestGames)
 						{
-							g.writeRequest(str1, ',');
-							str1.append(":");
+							g.writeRequest(str1, VocabServer.SPLITTER_2);
+							str1.append(VocabServer.SPLITTER_1);
 							str1.append(VocabServer.instance().findAccount(g.getOtherUser(acct.username)).email);
-							str1.append(":");
+							str1.append(VocabServer.SPLITTER_1);
 						}
 						
-						writer.println("CONT:" + str1);
+						writer.println(compileMsg("CONT", str1));
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("LPAST"))
@@ -347,16 +352,16 @@ public class Communication extends Thread
 						
 						for(Game g : acct.pastGames)
 						{
-							g.writeDefault(str, ',');
-							str.append(":");
+							g.writeDefault(str, VocabServer.SPLITTER_2);
+							str.append(VocabServer.SPLITTER_1);
 							str.append(VocabServer.instance().findAccount(g.getOtherUser(acct.username)).email);
-							str.append(":");
+							str.append(VocabServer.SPLITTER_1);
 						}
 						
-						writer.println("ACCEPT:" + str);
+						writer.println(compileMsg("ACCEPT", str));
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("CONFGAME"))
@@ -375,19 +380,19 @@ public class Communication extends Thread
 							}
 							else if(status == 1)
 							{
-								writer.println("REJECT:You already have a game in progress with " + reqAcct.username + ".");
+								writer.println(compileMsg("REJECT", "You already have a game in progress with " + reqAcct.username + "."));
 							}
 							else if(status == 2)
 							{
-								writer.println("REJECT:A game request already exists between you and " + reqAcct.username + ".");
+								writer.println(compileMsg("REJECT", "A game request already exists between you and " + reqAcct.username + "."));
 							}
 						}
 						else {
-							writer.println("REJECT:Account doesn't exist");
+							writer.println(compileMsg("REJECT", "Account doesn't exist"));
 						}
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("NEWGAME"))
@@ -416,19 +421,19 @@ public class Communication extends Thread
 							}
 							else if(status == 1)
 							{
-								writer.println("REJECT:You already have a game in progress with " + reqAcct.username + ".");
+								writer.println(compileMsg("REJECT", "You already have a game in progress with " + reqAcct.username + "."));
 							}
 							else if(status == 2)
 							{
-								writer.println("REJECT:A game request already exists between you and " + reqAcct.username + ".");
+								writer.println(compileMsg("REJECT", "A game request already exists between you and " + reqAcct.username + "."));
 							}
 						}
 						else {
-							writer.println("REJECT:Account doesn't exist");
+							writer.println(compileMsg("REJECT", "Account doesn't exist"));
 						}
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("COMPGAME"))
@@ -445,8 +450,6 @@ public class Communication extends Thread
 							{
 								Game pair = VocabServer.instance().findActiveGamePair(g);
 								int score = Integer.parseInt(msg[3]);
-								
-								System.out.println("COMPGAME " + (g == pair));
 								
 								g.userTurn = false;
 								g.userPoints.add(score);
@@ -490,15 +493,15 @@ public class Communication extends Thread
 								writer.println("ACCEPT");
 							}
 							else {
-								writer.println("REJECT:Game doesn't exist");
+								writer.println(compileMsg("REJECT", "Game doesn't exist"));
 							}
 						}
 						else {
-							writer.println("REJECT:Account doesn't exist");
+							writer.println(compileMsg("REJECT", "Account doesn't exist"));
 						}
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("GAMEREQCONF"))
@@ -523,15 +526,15 @@ public class Communication extends Thread
 								writer.println("ACCEPT");
 							}
 							else {
-								writer.println("REJECT:Game doesn't exist");
+								writer.println(compileMsg("REJECT", "Game doesn't exist"));
 							}
 						}
 						else {
-							writer.println("REJECT:Account doesn't exist");
+							writer.println(compileMsg("REJECT", "Account doesn't exist"));
 						}
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("DELGAME"))
@@ -580,11 +583,11 @@ public class Communication extends Thread
 							}
 						}
 						else {
-							writer.println("REJECT:Account doesn't exist");
+							writer.println(compileMsg("REJECT", "Account doesn't exist"));
 						}
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("CHANGEPASS"))
@@ -599,15 +602,15 @@ public class Communication extends Thread
 							
 							if(newPass.length() > 16)
 							{
-								writer.println("REJECT:Password must be at or below 16 characters");
+								writer.println(compileMsg("REJECT", "Password must be at or below 16 characters"));
 							}
 							else if(newPass.length() < 6)
 							{
-								writer.println("REJECT:Password must be at least 6 characters");
+								writer.println(compileMsg("REJECT", "Password must be at least 6 characters"));
 							}
 							else if(!AccountParser.isValidCredential(newPass, false))
 							{
-								writer.println("REJECT:Special characters are not allowed");
+								writer.println(compileMsg("REJECT", "Special characters are not allowed"));
 							}
 							else {
 								acct.setPassword(newPass);
@@ -616,11 +619,11 @@ public class Communication extends Thread
 							}
 						}
 						else {
-							writer.println("REJECT:Current password does not match.");
+							writer.println(compileMsg("REJECT", "Current password does not match."));
 						}
 					}
 					else {
-						writer.println("REJECT:Unable to authenticate");
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("JOINGAME"))
@@ -636,7 +639,7 @@ public class Communication extends Thread
 								if(entry.getValue() != Account.DEFAULT.username)
 								{
 									VocabServer.instance().searching.put(entry.getKey(), acct.username);
-									writer.println("ACCEPT:" + entry.getKey());
+									writer.println(compileMsg("ACCEPT", entry.getKey()));
 									found = true;
 									break;
 								}
@@ -654,7 +657,7 @@ public class Communication extends Thread
 								
 								if(user != null && user != Account.DEFAULT.username)
 								{
-									writer.println("ACCEPT:" + VocabServer.instance().searching.get(acct.username));
+									writer.println(compileMsg("ACCEPT", VocabServer.instance().searching.get(acct.username)));
 									found = true;
 									break;
 								}
@@ -668,6 +671,75 @@ public class Communication extends Thread
 								writer.println("REJECT:Timeout");
 							}
 						}
+					}
+				}
+				else if(msg[0].equals("CONFLIST"))
+				{
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						String listID = msg[2].trim();
+						
+						if(acct.ownedLists.size() >= 5 && !acct.premium)
+						{
+							writer.println(compileMsg("REJECT", "You've reached the maximum amount of custom lists."));
+						}
+						else if(acct.ownedLists.get(listID) != null)
+						{
+							writer.println(compileMsg("REJECT", "You already have a custom list with that identifier!"));
+						}
+						else {
+							writer.println("ACCEPT");
+						}
+					}
+					else {
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
+					}
+				}
+				else if(msg[0].equals("LLISTS"))
+				{
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						StringBuilder str = new StringBuilder();
+						
+						for(Map.Entry<String, String> entry : acct.ownedLists.entrySet())
+						{
+							str.append(entry.getKey() + VocabServer.SPLITTER_2 + entry.getValue());
+							str.append(VocabServer.SPLITTER_1);
+						}
+						
+						writer.println(compileMsg("ACCEPT", str));
+					}
+					else {
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
+					}
+				}
+				else if(msg[0].equals("UPLOAD"))
+				{
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						String listID = msg[2].trim();
+						String[] listData = Arrays.copyOfRange(msg, 3, msg.length);
+						
+						String url = "http://104.236.13.142/Lists/" + acct.username + "/" + listID + ".txt";
+						
+						if(createList(acct, listID, listData))
+						{
+							acct.ownedLists.put(listID, url);
+						}
+						
+						writer.println(compileMsg("ACCEPT", url));
+					}
+				}
+				else if(msg[0].equals("DELLIST"))
+				{
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						String listID = msg[2].trim();
+						
+						deleteList(acct, listID);
+						acct.ownedLists.remove(listID);
+						
+						writer.println("ACCEPT");
 					}
 				}
 			}
@@ -684,6 +756,74 @@ public class Communication extends Thread
 		{
 			VocabServer.instance().searching.remove(acct.username);
 		}
+	}
+	
+	public static void deleteList(Account acct, String listID)
+	{
+		File userDir = new File(VocabServer.LISTS_DIR, acct.username);
+		File listFile = new File(userDir, listID + ".txt");
+		
+		if(listFile.exists())
+		{
+			listFile.delete();
+		}
+	}
+	
+	public static boolean createList(Account acct, String listID, String[] listData)
+	{
+		try {
+			File userDir = new File(VocabServer.LISTS_DIR, acct.username);
+			userDir.mkdirs();
+			
+			File listFile = new File(userDir, listID + ".txt");
+			
+			if(listFile.exists())
+			{
+				listFile.delete();
+			}
+			
+			listFile.createNewFile();
+			
+			BufferedWriter writer = new BufferedWriter(new FileWriter(listFile));
+			
+			for(String entry : listData)
+			{
+				String[] split = entry.split(VocabServer.SPLITTER_2);
+				
+				if(split.length == 2)
+				{
+					writer.write(split[0] + ">" + split[1]);
+					writer.newLine();
+				}
+			}
+			
+			writer.flush();
+			writer.close();
+			
+			return true;
+		} catch(Exception e) {
+			System.err.println("Couldn't create new word list:");
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public static String compileMsg(Object... strings)
+	{
+		StringBuilder str = new StringBuilder();
+		
+		for(int i = 0; i < strings.length; i++)
+		{
+			str.append(strings[i]);
+			
+			if(i < strings.length-2)
+			{
+				str.append(VocabServer.SPLITTER_1);
+			}
+		}
+		
+		return str.toString();
 	}
 	
 	public int canStartGame(Account acct, Account reqAcct)

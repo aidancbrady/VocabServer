@@ -1,5 +1,6 @@
 package com.aidancbrady.vocabserver;
 
+import java.io.File;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +18,11 @@ public class VocabServer
 	
 	public List<Account> accounts = new ArrayList<Account>();
 	public Map<String, String> searching = new HashMap<String, String>();
+	
+	public static final String SPLITTER_1 = "}";
+	public static final String SPLITTER_2 = "^";
+	
+	public static final File LISTS_DIR = new File(File.separator + "var" + File.separator + "www" + File.separator + "Lists");
 	
 	public boolean serverRunning;
 	
