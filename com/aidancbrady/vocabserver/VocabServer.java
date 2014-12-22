@@ -21,6 +21,7 @@ public class VocabServer
 	
 	public static final String SPLITTER_1 = "}";
 	public static final String SPLITTER_2 = "]";
+	public static final String NULL = "|NULL|";
 	
 	public static final File LISTS_DIR = new File(File.separator + "var" + File.separator + "www" + File.separator + "html" + File.separator + "Lists");
 	

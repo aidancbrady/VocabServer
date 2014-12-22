@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -684,7 +683,7 @@ public class Communication extends Thread
 						{
 							writer.println(compileMsg("REJECT", "You've reached the maximum amount of custom lists."));
 						}
-						else if(acct.ownedLists.get(listID) != null)
+						else if(!listID.equals(VocabServer.NULL) && acct.ownedLists.get(listID) != null)
 						{
 							writer.println(compileMsg("REJECT", "You already have a custom list with that identifier!"));
 						}
@@ -728,7 +727,10 @@ public class Communication extends Thread
 							acct.ownedLists.put(listID, url);
 						}
 						
-						writer.println(compileMsg("ACCEPT", url));
+						writer.println(compileMsg("ACCEPT", acct.ownedLists.size(), url));
+					}
+					else {
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("DELLIST"))
@@ -741,6 +743,25 @@ public class Communication extends Thread
 						acct.ownedLists.remove(listID);
 						
 						writer.println("ACCEPT");
+					}
+					else {
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
+					}
+				}
+				else if(msg[0].equals("EDITLIST"))
+				{
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						String listID = msg[2].trim();
+						String[] listData = Arrays.copyOfRange(msg, 3, msg.length);
+						
+						deleteList(acct, listID);
+						createList(acct, listID, listData);
+						
+						writer.println("ACCEPT");
+					}
+					else {
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 			}
