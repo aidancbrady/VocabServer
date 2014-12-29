@@ -2,7 +2,7 @@ package com.aidancbrady.vocabserver;
 
 public class AccountParser 
 {
-	public static Character[] badChars = new Character[] {',', ':', '&', ' ', '|', '>'};
+	public static String[] badChars = new String[] {VocabServer.SPLITTER_1, VocabServer.SPLITTER_2, "&", " ", "|", VocabServer.LIST_SPLITTER};
 	
 	public static boolean isValidCredential(String str, boolean email)
 	{
@@ -34,9 +34,9 @@ public class AccountParser
 	{
 		for(String s : creds)
 		{
-			for(Character c : badChars)
+			for(String s1 : badChars)
 			{
-				if(s.contains(c.toString()))
+				if(s.contains(s1.toString()))
 				{
 					return false;
 				}

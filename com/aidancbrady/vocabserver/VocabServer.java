@@ -19,6 +19,7 @@ public class VocabServer
 	public List<Account> accounts = new ArrayList<Account>();
 	public Map<String, String> searching = new HashMap<String, String>();
 	
+	public static final String LIST_SPLITTER = ">";
 	public static final String SPLITTER_1 = "}";
 	public static final String SPLITTER_2 = "]";
 	public static final String NULL = "|NULL|";
