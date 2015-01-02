@@ -32,6 +32,8 @@ public final class AccountHandler
 				return;
 			}
 			
+			List<Account> accounts = new ArrayList<Account>();
+			
 			BufferedReader reader = new BufferedReader(new FileReader(dataFile));
 			
 			String readingLine;
@@ -139,12 +141,14 @@ public final class AccountHandler
 					
 					split = orig;
 					
-					VocabServer.instance().accounts.add(new Account(split[0], split[1], split[2])
+					accounts.add(new Account(split[0], split[1], split[2])
 					.setGamesWon(won).setGamesLost(lost).setLastLogin(lastLogin).setPremium(premium)
 					.setFriends(friends).setRequests(requests).setRequested(requested)
 					.setGameData(activeGames, requestGames, pastGames).setOwnedLists(ownedLists));
 				}
 			}
+			
+			VocabServer.instance().accounts = accounts;
 			
 			assertValidity();
 			
