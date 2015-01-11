@@ -15,6 +15,7 @@ import java.util.Map;
 
 import com.aidancbrady.vocabserver.Account;
 import com.aidancbrady.vocabserver.AccountParser;
+import com.aidancbrady.vocabserver.NotificationManager;
 import com.aidancbrady.vocabserver.VocabServer;
 import com.aidancbrady.vocabserver.game.Game;
 
@@ -256,6 +257,8 @@ public class Communication extends Thread
 									acct.requested.add(reqAcct.username);
 								}
 								
+								NotificationManager.onFriendRequest(acct, reqAcct);
+								
 								writer.println("ACCEPT");
 							}
 						}
@@ -283,6 +286,8 @@ public class Communication extends Thread
 							reqAcct.requests.remove(acct.username);
 							acct.requested.remove(acct.username);
 							reqAcct.requested.remove(acct.username);
+							
+							NotificationManager.onFriendAccept(reqAcct, acct);
 							
 							writer.println("ACCEPT");
 						}
@@ -417,6 +422,8 @@ public class Communication extends Thread
 								acct.requestGames.add(game);
 								reqAcct.requestGames.add(game.getNewRequestPair());
 								
+								NotificationManager.onGameRequest(acct, reqAcct);
+								
 								writer.println("ACCEPT");
 							}
 							else if(status == 1)
@@ -464,6 +471,8 @@ public class Communication extends Thread
 										g.readWordList(msg[4]);
 										pair.readWordList(msg[4]);
 									}
+									
+									NotificationManager.onGameTurn(acct, reqAcct);
 								}
 								else {
 									String winner = g.getWinner();
@@ -488,6 +497,8 @@ public class Communication extends Thread
 										reqAcct.gamesWon++;
 										acct.gamesLost++;
 									}
+									
+									NotificationManager.onGameComplete(acct, reqAcct);
 								}
 								
 								writer.println("ACCEPT");
@@ -523,6 +534,8 @@ public class Communication extends Thread
 								acct.activeGames.add(g.convertToActive(acct.username));
 								reqAcct.activeGames.add(pair.convertToActive(reqAcct.username));
 								
+								NotificationManager.onGameAccept(reqAcct, acct);
+								
 								writer.println("ACCEPT");
 							}
 							else {
@@ -554,6 +567,8 @@ public class Communication extends Thread
 								
 								delAcct.activeGames.remove(VocabServer.instance().findActiveGame(delAcct, acct));
 								delAcct.gamesWon++;
+								
+								NotificationManager.onGameResign(acct, delAcct);
 								
 								writer.println("ACCEPT");
 							}
@@ -757,6 +772,27 @@ public class Communication extends Thread
 						
 						deleteList(acct, listID);
 						createList(acct, listID, listData);
+						
+						writer.println("ACCEPT");
+					}
+					else {
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
+					}
+				}
+				else if(msg[0].equals("PUSHID"))
+				{
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						String deviceID = msg[2].trim();
+						
+						System.out.println("User " + acct.username + " sent device ID " + deviceID);
+						
+						for(Account iterAcct : VocabServer.instance().accounts)
+						{
+							iterAcct.deviceIDs.remove(deviceID);
+						}
+						
+						acct.deviceIDs.add(deviceID);
 						
 						writer.println("ACCEPT");
 					}

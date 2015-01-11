@@ -7,9 +7,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.aidancbrady.vocabserver.Account;
 import com.aidancbrady.vocabserver.VocabServer;
@@ -56,6 +58,8 @@ public final class AccountHandler
 					List<Game> activeGames = new ArrayList<Game>();
 					List<Game> requestGames = new ArrayList<Game>();
 					List<Game> pastGames = new ArrayList<Game>();
+					
+					Set<String> deviceIDs = new HashSet<String>();
 					
 					Map<String, String> ownedLists = new HashMap<String, String>();
 					
@@ -129,6 +133,13 @@ public final class AccountHandler
 					
 					split = reader.readLine().split(VocabServer.SPLITTER_1);
 					
+					for(String id : split)
+					{
+						deviceIDs.add(id.trim());
+					}
+					
+					split = reader.readLine().split(VocabServer.SPLITTER_1);
+					
 					for(String entry : split)
 					{
 						String[] entrySplit = entry.split(VocabServer.SPLITTER_2);
@@ -144,7 +155,7 @@ public final class AccountHandler
 					accounts.add(new Account(split[0], split[1], split[2])
 					.setGamesWon(won).setGamesLost(lost).setLastLogin(lastLogin).setPremium(premium)
 					.setFriends(friends).setRequests(requests).setRequested(requested)
-					.setGameData(activeGames, requestGames, pastGames).setOwnedLists(ownedLists));
+					.setGameData(activeGames, requestGames, pastGames).setDeviceIDs(deviceIDs).setOwnedLists(ownedLists));
 				}
 			}
 			
@@ -241,6 +252,14 @@ public final class AccountHandler
 					pastGames.append(VocabServer.SPLITTER_1);
 				}
 				
+				StringBuilder deviceIDs = new StringBuilder();
+				
+				for(String id : acct.deviceIDs)
+				{
+					deviceIDs.append(id);
+					deviceIDs.append(VocabServer.SPLITTER_1);
+				}
+				
 				StringBuilder ownedLists = new StringBuilder();
 				
 				for(Map.Entry<String, String> entry : acct.ownedLists.entrySet())
@@ -262,6 +281,9 @@ public final class AccountHandler
 				writer.newLine();
 				
 				writer.append(pastGames);
+				writer.newLine();
+				
+				writer.append(deviceIDs);
 				writer.newLine();
 				
 				writer.append(ownedLists);

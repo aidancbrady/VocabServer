@@ -26,7 +26,14 @@ public class VocabServer
 	
 	public static final File LISTS_DIR = new File(File.separator + "var" + File.separator + "www" + File.separator + "html" + File.separator + "Lists");
 	
+	public static final File DEV_CERTIFICATE = new File(File.separator + "root" + File.separator + "core_files" + File.separator + "DevCertificate.p12");
+	public static final File PUB_CERTIFICATE = new File(File.separator + "root" + File.separator + "core_files" + File.separator + "PubCertificate.p12");
+	
+	public static final String CERT_PASS = "push_password";
+	
 	public boolean serverRunning;
+	
+	public static boolean dev = true;
 	
 	public static final int SERVER_PORT = 26830;
 	
@@ -78,6 +85,10 @@ public class VocabServer
 					{
 						System.out.println(account.username + " " + account.email + " " + account.password);
 					}
+				}
+				else if(s.equals("dev"))
+				{
+					System.out.println("Development mode toggled to " + (dev = !dev));
 				}
 				else if(s.startsWith("delete") || s.startsWith("remove"))
 				{

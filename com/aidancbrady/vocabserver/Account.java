@@ -3,8 +3,10 @@ package com.aidancbrady.vocabserver;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.aidancbrady.vocabserver.game.Game;
 
@@ -35,6 +37,8 @@ public class Account
 	public List<Game> activeGames = new ArrayList<Game>();
 	public List<Game> requestGames = new ArrayList<Game>();
 	public List<Game> pastGames = new ArrayList<Game>();
+	
+	public Set<String> deviceIDs = new HashSet<String>();
 	
 	public Map<String, String> ownedLists = new HashMap<String, String>();
 	
@@ -152,6 +156,13 @@ public class Account
 	public Account setPremium(boolean b)
 	{
 		premium = b;
+		
+		return this;
+	}
+	
+	public Account setDeviceIDs(Set<String> ids)
+	{
+		deviceIDs = ids;
 		
 		return this;
 	}
