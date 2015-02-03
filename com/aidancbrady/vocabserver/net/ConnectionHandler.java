@@ -16,7 +16,11 @@ public class ConnectionHandler extends Thread
 				
 				if(VocabServer.instance().serverRunning)
 				{
-					System.out.println("Initiating connection with " + connection.getInetAddress());
+					if(VocabServer.logConnections) 
+					{
+						System.out.println("Initiating connection with " + connection.getInetAddress());
+					}
+					
 					new Communication(connection).start();
 				}
 			}

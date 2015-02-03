@@ -51,7 +51,10 @@ public class Communication extends Thread
 				
 				if(msg[0].equals("LOGIN"))
 				{
-					System.out.println(socket.getInetAddress() + " attempted to log in with creds " + msg[1] + ", " + msg[2]);
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " attempted to log in with creds " + msg[1] + ", " + msg[2]);
+					}
 					
 					if((acct = VocabServer.instance().findAccount(msg[1], msg[2])) != null)
 					{
@@ -64,7 +67,10 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("REGISTER"))
 				{
-					System.out.println(socket.getInetAddress() + " attempted to register with creds " + msg[1] + ", " + msg[2] + ", " + msg[3]);
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " attempted to register with creds " + msg[1] + ", " + msg[2] + ", " + msg[3]);
+					}
 					
 					if(VocabServer.instance().findAccount(msg[1]) != null)
 					{
@@ -95,6 +101,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LFRIENDS"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested a list of friends as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						StringBuilder str = new StringBuilder();
@@ -129,6 +140,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("DELFRIEND"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested to delete friend " + msg[2] + " as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account delAcct = null;
@@ -169,6 +185,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LUSERS"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested a list of users with query '" + msg[2] + "' as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						String query = null;
@@ -215,6 +236,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LREQUESTS"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested a list of friend requests as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						StringBuilder str = new StringBuilder();
@@ -235,6 +261,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("FRIENDREQ"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " sent a friend request to " + msg[2] + " as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account reqAcct = null;
@@ -244,7 +275,6 @@ public class Communication extends Thread
 							if(acct.friends.contains(reqAcct.username))
 							{
 								writer.println(compileMsg("REJECT", "User is already in your friends list"));
-								System.out.println(msg[1].trim() + " tried to send a FRIENDREQ request to " + msg[2].trim() + ", who was already friends");
 							}
 							else {
 								if(!reqAcct.requests.contains(acct.username))
@@ -274,6 +304,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("REQCONF"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " confirmed " + msg[2] + "'s friend request as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account reqAcct = null;
@@ -301,6 +336,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("GETINFO"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested info of user " + msg[2] + " as " + msg[1]);
+					}
+					
 					if(VocabServer.instance().findAccount(msg[1].trim()) != null)
 					{
 						Account reqAcct = null;
@@ -319,6 +359,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LGAMES"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested a list of active games as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						StringBuilder str = new StringBuilder();
@@ -351,6 +396,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LPAST"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested a list of past games as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						StringBuilder str = new StringBuilder();
@@ -371,6 +421,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("CONFGAME"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested a game confirmation with user " + msg[2] + " as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account reqAcct = null;
@@ -402,6 +457,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("NEWGAME"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested to start a new game with user " + msg[2] + " as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account reqAcct = null;
@@ -445,6 +505,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("COMPGAME"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " completed an individual game with " + msg[2] + " as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account reqAcct = null;
@@ -517,6 +582,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("GAMEREQCONF"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " accepted " + msg[2] + "'s game request as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account reqAcct = null;
@@ -552,6 +622,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("DELGAME"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested to delete a game with " + msg[2] + " as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						Account delAcct = null;
@@ -607,6 +682,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("CHANGEPASS"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested a password change of " + msg[3] + " as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						String current = msg[2].trim();
@@ -690,6 +770,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("CONFLIST"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested a new list confirmation of id " + msg[2] + " as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						String listID = msg[2].trim();
@@ -712,6 +797,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("LLISTS"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested a list of uploaded lists as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						StringBuilder str = new StringBuilder();
@@ -730,6 +820,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("UPLOAD"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested to upload list of id " + msg[2] + " as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						String listID = msg[2].trim();
@@ -750,6 +845,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("DELLIST"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested to delete a list of id " + msg[2] + " as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						String listID = msg[2].trim();
@@ -765,6 +865,11 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("EDITLIST"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested to edit list of id " + msg[2] + " as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						String listID = msg[2].trim();
@@ -781,11 +886,14 @@ public class Communication extends Thread
 				}
 				else if(msg[0].equals("PUSHID"))
 				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " sent device ID of " + msg[2] + " as " + msg[1]);
+					}
+					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
 					{
 						String deviceID = msg[2].trim();
-						
-						System.out.println("User " + acct.username + " sent device ID " + deviceID);
 						
 						for(Account iterAcct : VocabServer.instance().accounts)
 						{
@@ -804,7 +912,11 @@ public class Communication extends Thread
 			
 			writer.flush();
 			
-			System.out.println("Closing connection with " + socket.getInetAddress());
+			if(VocabServer.logConnections)
+			{
+				System.out.println("Closing connection with " + socket.getInetAddress());
+			}
+			
 			close();
 		} catch(Throwable t) {
 			t.printStackTrace();
