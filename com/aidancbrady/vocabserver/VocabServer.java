@@ -34,8 +34,10 @@ public class VocabServer
 	public boolean serverRunning;
 	
 	public static boolean dev = true;
+	
 	public static boolean logConnections = false;
 	public static boolean logCommands = false;
+	public static boolean logSaves = false;
 	
 	public static final int SERVER_PORT = 26830;
 	
@@ -99,6 +101,10 @@ public class VocabServer
 				else if(s.equals("commands"))
 				{
 					System.out.println("Command logs toggled to " + (logCommands = !logCommands));
+				}
+				else if(s.equals("saves"))
+				{
+					System.out.println("Save logs toggled to " + (logSaves = !logSaves));
 				}
 				else if(s.startsWith("delete") || s.startsWith("remove"))
 				{

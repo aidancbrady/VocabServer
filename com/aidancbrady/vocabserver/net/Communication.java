@@ -187,7 +187,7 @@ public class Communication extends Thread
 				{
 					if(VocabServer.logCommands)
 					{
-						System.out.println(socket.getInetAddress() + " requested a list of users with query '" + msg[2] + "' as " + msg[1]);
+						System.out.println(socket.getInetAddress() + " requested a list of users with query '" + (msg.length == 3 ? msg[2] : "") + "' as " + msg[1]);
 					}
 					
 					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
@@ -352,6 +352,86 @@ public class Communication extends Thread
 						else {
 							writer.println(compileMsg("REJECT", "Account doesn't exist"));
 						}
+					}
+					else {
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
+					}
+				}
+				else if(msg[0].equals("GETGAME"))
+				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested info of a game with user " + msg[2] + " as " + msg[1]);
+						
+						if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+						{
+							Account reqAcct = null;
+							
+							if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
+							{
+								Game g = VocabServer.instance().findActiveGame(acct, reqAcct);
+								
+								if(g != null)
+								{
+									StringBuilder str = new StringBuilder();
+									g.writeDefault(str, VocabServer.SPLITTER_2);
+									
+									writer.println(compileMsg("ACCEPT", str));
+								}
+								else {
+									writer.println(compileMsg("REJECT", "Game doesn't exist"));
+								}
+							}
+							else {
+								writer.println(compileMsg("REJECT", "Account doesn't exist"));
+							}
+						}
+						else {
+							writer.println(compileMsg("REJECT", "Unable to authenticate"));
+						}
+					}
+				}
+				else if(msg[0].equals("LGAMES_S"))
+				{
+					if(VocabServer.logCommands)
+					{
+						System.out.println(socket.getInetAddress() + " requested a short list of active games as " + msg[1]);
+					}
+					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						StringBuilder str = new StringBuilder();
+						
+						for(Game g : acct.activeGames)
+						{
+							str.append(g.opponent);
+							str.append(VocabServer.SPLITTER_2);
+							str.append(g.userTurn);
+							str.append(VocabServer.SPLITTER_2);
+							str.append(g.getUserScore());
+							str.append(VocabServer.SPLITTER_2);
+							str.append(g.getOpponentScore());
+							str.append(VocabServer.instance().findAccount(g.opponent).email);
+							str.append(VocabServer.SPLITTER_1);
+						}
+						
+						writer.println(compileMsg("ACCEPT", str));
+						
+						StringBuilder str1 = new StringBuilder();
+						
+						for(Game g : acct.requestGames)
+						{
+							str1.append(g.getOtherUser(acct.username));
+							str1.append(VocabServer.SPLITTER_2);
+							str1.append(g.userTurn);
+							str1.append(VocabServer.SPLITTER_2);
+							str1.append(g.getUserScore());
+							str1.append(VocabServer.SPLITTER_2);
+							str1.append(VocabServer.instance().findAccount(g.getOtherUser(acct.username)).email);
+							str1.append(VocabServer.SPLITTER_1);
+						}
+						
+						writer.println(compileMsg("CONT", str1));
 					}
 					else {
 						writer.println(compileMsg("REJECT", "Unable to authenticate"));

@@ -172,7 +172,10 @@ public final class AccountHandler
 	
 	public static void save()
 	{
-		System.out.println("Saving accounts list...");
+		if(VocabServer.logSaves)
+		{
+			System.out.println("Saving accounts list...");
+		}
 		
 		try {
 			if(dataFile.exists())

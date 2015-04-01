@@ -15,8 +15,8 @@ public final class ServerTimer extends Thread
 		while(VocabServer.instance().serverRunning)
 		{
 			try {
-				Thread.sleep(1000*60*5);
-				System.out.println("Initiating auto-save");
+				Thread.sleep(1000*60*15);
+				
 				AccountHandler.save();
 			} catch(Exception e) {
 				e.printStackTrace();
