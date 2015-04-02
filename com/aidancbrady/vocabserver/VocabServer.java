@@ -332,7 +332,7 @@ public class VocabServer
 	{
 		for(Game g : user.requestGames)
 		{
-			if(!g.activeRequested && g.hasUser(opponent.username))
+			if(g.hasUser(opponent.username))
 			{
 				return g;
 			}
@@ -349,7 +349,7 @@ public class VocabServer
 	{
 		for(Game g : opponent.requestGames)
 		{
-			if(g.activeRequested && g.hasUser(user.username))
+			if(g.hasUser(user.username))
 			{
 				return g;
 			}

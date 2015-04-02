@@ -362,33 +362,33 @@ public class Communication extends Thread
 					if(VocabServer.logCommands)
 					{
 						System.out.println(socket.getInetAddress() + " requested info of a game with user " + msg[2] + " as " + msg[1]);
+					}
+					
+					if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+					{
+						Account reqAcct = null;
 						
-						if((acct = VocabServer.instance().findAccount(msg[1].trim())) != null)
+						if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
 						{
-							Account reqAcct = null;
+							Game g = VocabServer.instance().findActiveGame(acct, reqAcct);
 							
-							if((reqAcct = VocabServer.instance().findAccount(msg[2].trim())) != null)
+							if(g != null)
 							{
-								Game g = VocabServer.instance().findActiveGame(acct, reqAcct);
+								StringBuilder str = new StringBuilder();
+								g.writeDefault(str, VocabServer.SPLITTER_2);
 								
-								if(g != null)
-								{
-									StringBuilder str = new StringBuilder();
-									g.writeDefault(str, VocabServer.SPLITTER_2);
-									
-									writer.println(compileMsg("ACCEPT", str));
-								}
-								else {
-									writer.println(compileMsg("REJECT", "Game doesn't exist"));
-								}
+								writer.println(compileMsg("ACCEPT", str, VocabServer.instance().findAccount(g.opponent).email));
 							}
 							else {
-								writer.println(compileMsg("REJECT", "Account doesn't exist"));
+								writer.println(compileMsg("REJECT", "Game doesn't exist"));
 							}
 						}
 						else {
-							writer.println(compileMsg("REJECT", "Unable to authenticate"));
+							writer.println(compileMsg("REJECT", "Account doesn't exist"));
 						}
+					}
+					else {
+						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
 				}
 				else if(msg[0].equals("LGAMES_S"))
@@ -629,6 +629,16 @@ public class Communication extends Thread
 									acct.pastGames.add(g.convertToPast());
 									reqAcct.pastGames.add(pair.convertToPast());
 									
+									if(acct.pastGames.size() > 10)
+									{
+										acct.pastGames.remove(0);
+									}
+									
+									if(reqAcct.pastGames.size() > 10)
+									{
+										reqAcct.pastGames.remove(0);
+									}
+									
 									if(winner == null)
 									{
 										acct.gamesWon++;
@@ -747,8 +757,8 @@ public class Communication extends Thread
 							}
 							else if(type == 3 /*Requested*/)
 							{
-								acct.requestGames.remove(VocabServer.instance().findRequestGamePair(acct, delAcct));
-								delAcct.requestGames.remove(VocabServer.instance().findRequestGame(acct, delAcct));
+								acct.requestGames.remove(VocabServer.instance().findRequestGamePair(delAcct, acct));
+								delAcct.requestGames.remove(VocabServer.instance().findRequestGame(delAcct, acct));
 								
 								writer.println("ACCEPT");
 							}
@@ -988,6 +998,9 @@ public class Communication extends Thread
 					else {
 						writer.println(compileMsg("REJECT", "Unable to authenticate"));
 					}
+				}
+				else {
+					writer.println(compileMsg("REJECT", "Unknown command"));
 				}
 			}
 			
