@@ -411,6 +411,7 @@ public class Communication extends Thread
 							str.append(g.getUserScore());
 							str.append(VocabServer.SPLITTER_2);
 							str.append(g.getOpponentScore());
+							str.append(VocabServer.SPLITTER_2);
 							str.append(VocabServer.instance().findAccount(g.opponent).email);
 							str.append(VocabServer.SPLITTER_1);
 						}
