@@ -50,6 +50,16 @@ public class NotificationManager
 		sendNotification(opponent, "RESIGN", resigned.username + " has resigned!");
 	}
 	
+	public static void test(Account acct, String msg)
+	{
+		test(acct, "TEST", msg);
+	}
+	
+	public static void test(Account acct, String type, String msg)
+	{
+		sendNotification(acct, type, msg);
+	}
+	
 	private static void sendNotification(Account acct, String type, String msg)
 	{
 		File certFile = VocabServer.dev ? VocabServer.DEV_CERTIFICATE : VocabServer.PUB_CERTIFICATE;

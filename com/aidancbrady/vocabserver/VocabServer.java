@@ -33,7 +33,7 @@ public class VocabServer
 	
 	public boolean serverRunning;
 	
-	public static boolean dev = true;
+	public static boolean dev = false;
 	
 	public static boolean logConnections = false;
 	public static boolean logCommands = false;
@@ -140,6 +140,54 @@ public class VocabServer
 				{
 					AccountHandler.assertValidity();
 					System.out.println("Successfully asserted validity of user list");
+				}
+				else if(s.startsWith("notify"))
+				{
+					String[] split = s.split(" ");
+					
+					if(split.length == 3)
+					{
+						Account acct = findAccount(split[1]);
+						
+						if(acct != null)
+						{
+							NotificationManager.test(acct, split[2]);
+							System.out.println("Sent notification to " + acct.username);
+						}
+					}
+					else if(split.length == 4)
+					{
+						Account acct = findAccount(split[1]);
+						
+						if(acct != null)
+						{
+							NotificationManager.test(acct, split[3], split[2]);
+							System.out.println("Sent notification to " + acct.username);
+						}
+					}
+				}
+				else if(s.startsWith("notifyAll"))
+				{
+					String[] split = s.split(" ");
+					
+					if(split.length == 2)
+					{
+						for(Account acct : accounts)
+						{
+							NotificationManager.test(acct, split[1]);
+						}
+						
+						System.out.println("Sent notification to all users");
+					}
+					else if(split.length == 3)
+					{
+						for(Account acct : accounts)
+						{
+							NotificationManager.test(acct, split[2], split[1]);
+						}
+						
+						System.out.println("Sent notification to all users");
+					}
 				}
 				else if(s.startsWith("info"))
 				{
