@@ -145,7 +145,7 @@ public class VocabServer
 				{
 					String[] split = s.split(" ");
 					
-					if(split.length == 3)
+					if(split.length >= 3)
 					{
 						Account acct = findAccount(split[1]);
 						
@@ -155,7 +155,12 @@ public class VocabServer
 							System.out.println("Sent notification to " + acct.username);
 						}
 					}
-					else if(split.length == 4)
+				}
+				else if(s.startsWith("notify_action"))
+				{
+					String[] split = s.split(" ");
+					
+					if(split.length >= 4)
 					{
 						Account acct = findAccount(split[1]);
 						
@@ -170,20 +175,11 @@ public class VocabServer
 				{
 					String[] split = s.split(" ");
 					
-					if(split.length == 2)
+					if(split.length >= 2)
 					{
 						for(Account acct : accounts)
 						{
 							NotificationManager.test(acct, split[1]);
-						}
-						
-						System.out.println("Sent notification to all users");
-					}
-					else if(split.length == 3)
-					{
-						for(Account acct : accounts)
-						{
-							NotificationManager.test(acct, split[2], split[1]);
 						}
 						
 						System.out.println("Sent notification to all users");
