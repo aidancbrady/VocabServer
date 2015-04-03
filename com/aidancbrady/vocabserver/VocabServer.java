@@ -154,6 +154,12 @@ public class VocabServer
 							NotificationManager.test(acct, s.substring(split[0].length() + 1 + split[1].length() + 1));
 							System.out.println("Sent notification to " + acct.username);
 						}
+						else {
+							System.out.println("Account not found");
+						}
+					}
+					else {
+						System.out.println("Invalid parameters");
 					}
 				}
 				else if(s.startsWith("notify_action"))
@@ -169,6 +175,12 @@ public class VocabServer
 							NotificationManager.test(acct, split[2], s.substring(split[0].length() + 1 + split[1].length() + 1 + split[2].length() + 1));
 							System.out.println("Sent notification to " + acct.username);
 						}
+						else {
+							System.out.println("Account not found");
+						}
+					}
+					else {
+						System.out.println("Invalid parameters");
 					}
 				}
 				else if(s.startsWith("notifyAll"))
@@ -183,6 +195,30 @@ public class VocabServer
 						}
 						
 						System.out.println("Sent notification to all users");
+					}
+					else {
+						System.out.println("Invalid parameters");
+					}
+				}
+				else if(s.startsWith("clear_IDs"))
+				{
+					String[] split = s.split(" ");
+					
+					if(split.length == 2)
+					{
+						Account acct = findAccount(split[1]);
+						
+						if(acct != null)
+						{
+							acct.deviceIDs.clear();
+							System.out.println("Cleared device IDs for user " + acct.username);
+						}
+						else {
+							System.out.println("Account not found");
+						}
+					}
+					else {
+						System.out.println("Invalid parameters");
 					}
 				}
 				else if(s.startsWith("deviceID"))
@@ -210,6 +246,12 @@ public class VocabServer
 								System.out.println("No device IDs found.");
 							}
 						}
+						else {
+							System.out.println("Account not found");
+						}
+					}
+					else {
+						System.out.println("Invalid parameters");
 					}
 				}
 				else if(s.startsWith("info"))
