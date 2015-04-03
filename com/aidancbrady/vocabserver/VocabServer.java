@@ -151,7 +151,7 @@ public class VocabServer
 						
 						if(acct != null)
 						{
-							NotificationManager.test(acct, split[2]);
+							NotificationManager.test(acct, s.substring(split[0].length() + 1 + split[1].length() + 1));
 							System.out.println("Sent notification to " + acct.username);
 						}
 					}
@@ -166,7 +166,7 @@ public class VocabServer
 						
 						if(acct != null)
 						{
-							NotificationManager.test(acct, split[3], split[2]);
+							NotificationManager.test(acct, split[2], s.substring(split[0].length() + 1 + split[1].length() + 1 + split[2].length() + 1));
 							System.out.println("Sent notification to " + acct.username);
 						}
 					}
@@ -179,7 +179,7 @@ public class VocabServer
 					{
 						for(Account acct : accounts)
 						{
-							NotificationManager.test(acct, split[1]);
+							NotificationManager.test(acct, s.substring(split[0].length() + 1));
 						}
 						
 						System.out.println("Sent notification to all users");
