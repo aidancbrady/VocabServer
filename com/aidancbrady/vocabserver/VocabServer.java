@@ -141,7 +141,7 @@ public class VocabServer
 					AccountHandler.assertValidity();
 					System.out.println("Successfully asserted validity of user list");
 				}
-				else if(s.startsWith("notify"))
+				else if(s.startsWith("notify_single"))
 				{
 					String[] split = s.split(" ");
 					
@@ -183,7 +183,7 @@ public class VocabServer
 						System.out.println("Invalid parameters");
 					}
 				}
-				else if(s.startsWith("notifyAll"))
+				else if(s.startsWith("notify_all"))
 				{
 					String[] split = s.split(" ");
 					
