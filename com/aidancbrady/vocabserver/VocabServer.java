@@ -185,6 +185,33 @@ public class VocabServer
 						System.out.println("Sent notification to all users");
 					}
 				}
+				else if(s.startsWith("deviceID"))
+				{
+					String[] split = s.split(" ");
+					
+					if(split.length == 2)
+					{
+						Account acct = findAccount(split[1]);
+						
+						if(acct != null)
+						{
+							if(acct.deviceIDs.size() > 0)
+							{
+								System.out.println("Printing device IDs...");
+								
+								for(String id : acct.deviceIDs)
+								{
+									System.out.println(" - " + id);
+								}
+								
+								System.out.println("(end)");
+							}
+							else {
+								System.out.println("No device IDs found.");
+							}
+						}
+					}
+				}
 				else if(s.startsWith("info"))
 				{
 					if(s.split(" ").length > 1)
