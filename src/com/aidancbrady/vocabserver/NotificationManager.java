@@ -1,6 +1,7 @@
 package com.aidancbrady.vocabserver;
 
 import java.io.File;
+import java.util.Iterator;
 
 import com.notnoop.apns.APNS;
 import com.notnoop.apns.ApnsService;
@@ -81,9 +82,19 @@ public class NotificationManager
 		
 		String payload = APNS.newPayload().alertBody(msg).customField("action", type).build();
 		
-		for(String id : acct.deviceIDs)
+		for(Iterator<String> iter = acct.deviceIDs.iterator(); iter.hasNext();)
 		{
-			service.push(id, payload);
+		    String id = iter.next();
+		    
+		    try {
+    			service.push(id, payload);
+		    } catch(Exception e) {
+		        if(e.getMessage().contains("Invalid hex character"))
+		        {
+		            System.out.println("Removed invalid device ID: " + id);
+		            iter.remove();
+		        }
+		    }
 		}
 	}
 }

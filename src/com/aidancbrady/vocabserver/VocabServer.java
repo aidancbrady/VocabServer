@@ -250,6 +250,19 @@ public class VocabServer
 							System.out.println("Account not found");
 						}
 					}
+					else if(split.length == 3)
+					{
+					    Account acct = findAccount(split[1]);
+                        
+                        if(acct != null)
+                        {
+                            acct.deviceIDs.clear();
+                            System.out.println("Cleared device IDs for " + acct.username);
+                        }
+                        else {
+                            System.out.println("Account not found");
+                        }
+					}
 					else {
 						System.out.println("Invalid parameters");
 					}
